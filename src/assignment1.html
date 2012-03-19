@@ -40,6 +40,9 @@
 <div id="wrapper">
   <button id="start">Start</button>
   <button id="stop">Stop</button>
+  <button id="createCircle">Create Circle</button>
+  <button id="createRect">Create Rect</button>
+  <button id="createTriangle">Create Triangle</button>
 
   <br />
   <br />
@@ -49,9 +52,12 @@
 
 
 
+
+
+<script type="text/javascript" src="editor.js"></script>
+
 <script>
   $(document).ready(function () {
-    console.log("document.ready");
 
     $("#start").click(function (e) {
       console.log("start click");
@@ -63,13 +69,25 @@
       pjs.noLoop();
     });
 
+    $("#createCircle").click(function (e) {
+      console.log("createCircle click");
+      editor.perform("addShape", new Circle(pjs.width / 4, pjs.height / 4, 50));
+    });
+
+    $("#createRect").click(function (e) {
+      console.log("createRect click");
+      editor.perform("addShape", new Rect(pjs.width / 1.5, pjs.height / 4, 50, 50));
+    });
+
+    $("#createTriangle").click(function (e) {
+      console.log("createRect click");
+      editor.perform("addShape", new Triangle(30, 120, 50, 50, 80, 120));
+    });
+
   });
 
 
 </script>
-
-<script type="text/javascript" src="editor.js"></script>
-
 
 </body>
 </html>
