@@ -1,7 +1,7 @@
-const TOP_LEFT = 1
-  , TOP_RIGHT = 2
-  , BOTTOM_LEFT = 3
-  , BOTTOM_RIGHT = 4;
+const LEFT_UP = 1
+  , LEFT_DOWN = 2
+  , RIGHT_UP = 3
+  , RIGHT_DOWN = 4;
 
 // Shape class
 var Shape = Base.extend({
@@ -185,97 +185,140 @@ var Rect = Shape.extend({
 
 
   "resize": function () {
-    console.log("\n***RECT resize");
-    // pjs.mouseX = 75;
-    // pjs.mouseY = 100
+    console.log("\n\n***resize***");
+    var mouseX = pjs.mouseX
+    , mouseY = pjs.mouseY;
 
-    console.log("type: ", this.resizePoint);
-    console.log("mouse X,Y("+pjs.mouseX+","+pjs.mouseY+")");
-    console.log("max X,Y("+this.maxCoords.x+","+this.maxCoords.y+")");
-    console.log("this X,Y("+this.x+","+this.y+")");
-    console.log("this width,height("+this.width+","+this.height+")");
+    console.log("this.resizePoint: ", this.resizePoint);
+    console.log("max x,y("+this.maxCoords.x+","+this.maxCoords.y+")");
+    console.log("x,y("+this.x+","+this.y+")");
+    console.log("width,height ("+this.width+","+this.height+")");
+    console.log("mouse x,y ("+mouseX+","+mouseY+")");
 
     switch (this.resizePoint) {
-      // Check if mouse is going left/right
-      case TOP_LEFT:
-        if (pjs.mouseX >= this.x) {
-          // console.log("pjs.mouseX >= this.x");
-          if (pjs.mouseX <= this.maxCoords.x) {
-            this.width -= pjs.mouseX - this.x;
-            this.x = pjs.mouseX;
-            }
-            else {
-              this.width = pjs.mouseX - this.x;
-            }
-        }
-        else {
-          // console.log("else");
-          this.width += this.x - pjs.mouseX;
-          this.x = pjs.mouseX;
+      case LEFT_UP:
+        if (mouseY > this.maxCoords.y) {
+          this.resizePoint = LEFT_DOWN;
+          this.setMinCoords();
+          this.setMaxCoords();
         }
 
-        // Check if mouse is going up/down
-        if (pjs.mouseY >= this.y) {
-          // console.log("pjs.mouseY >= this.y");
-          if (pjs.mouseY <= this.maxCoords.y) {
-            this.height -= pjs.mouseY - this.y;
-            this.y = pjs.mouseY;
-          }
-          else {
-            this.height = pjs.mouseY - this.y;
-          }
+        if (mouseX > this.maxCoords.x) {
+          this.resizePoint = RIGHT_UP;
+          this.setMinCoords();
+          this.setMaxCoords();
         }
-        else {
-          // console.log("else");
-          this.height += this.y - pjs.mouseY;
-          this.y = pjs.mouseY;
+
+        if (mouseY > this.y) {
+          this.height -= mouseY - this.y;
+          this.y = mouseY;
+        }
+        else if (mouseY < this.y) {
+          this.height += this.y - mouseY;
+          this.y = mouseY;
+        }
+
+        if (mouseX > this.x) {
+          this.width -= mouseX - this.x;
+          this.x = mouseX;
+        }
+        else if (mouseX < this.x) {
+          this.width += this.x - mouseX;
+          this.x = mouseX;
+        }
+
+
+        break;
+      case LEFT_DOWN:
+        if (mouseY < this.y) {
+          this.resizePoint = LEFT_UP;
+          this.setMaxCoords();
+        }
+
+        if (mouseX > this.maxCoords.x) {
+          this.resizePoint = RIGHT_DOWN;
+          this.setMinCoords();
+        }
+
+        if (mouseX > this.x) {
+          this.width -= mouseX - this.x;
+          this.x = mouseX;
+        }
+        else if (mouseX < this.x) {
+          this.width += this.x - mouseX;
+          this.x = mouseX;
+        }
+
+        if (mouseY > (this.y + this.height)) {
+          this.height += mouseY - (this.y + this.height);
+        }
+        else if (mouseY < (this.y + this.height)) {
+          this.height -= (this.y + this.height) - mouseY;
         }
         break;
 
-      case TOP_RIGHT:
-        if (pjs.mouseX >= this.x + this.width) {
-          console.log("pjs.mouseX >= this.x + this.width");
-          this.width += pjs.mouseX - (this.x + this.width);
-        }
-        else {
-          console.log("else");
-          if (pjs.mouseX <= this.x) {
-            console.log("pjs.mouseX <= this.x");
-            this.width += this.x - pjs.mouseX;
-            this.x = pjs.mouseX;
-          }
-          else {
-            console.log("else");
-            if (pjs.mouseX <= this.minCoords.x) {
-              console.log("HIT MIN COORDS");
-              this.width -= pjs.mouseX - this.x;
-              this.x = pjs.mouseX;
-            }
-            else {
-              this.width -= (this.x + this.width) - pjs.mouseX;
-            }
-          }
+      case RIGHT_UP:
+        if (mouseX < this.minCoords.x) {
+          this.resizePoint = LEFT_UP;
+          this.setMaxCoords();
         }
 
-        if (pjs.mouseY < this.y) {
-          console.log("pjs.mouseY < this.y");
-          this.height += this.y - pjs.mouseY;
-          this.y = pjs.mouseY;
+        if (mouseY > this.maxCoords.y) {
+          this.resizePoint = RIGHT_DOWN;
+          this.setMaxCoords();
+          this.setMinCoords();
         }
-        else {
-          console.log("else");
-          this.height -= pjs.mouseY - this.y;
-          this.y = pjs.mouseY;
+
+        if (mouseX < (this.x + this.width)) {
+          this.width -= (this.x + this.width) - mouseX;
+        }
+        else if (mouseX > (this.x + this.width)) {
+          console.log("mouseX > this.maxCoords.x");
+          this.width += mouseX - (this.x + this.width);
+        }
+
+        if (mouseY > this.y) {
+          this.height -= mouseY - this.y;
+          this.y = mouseY;
+        }
+        else if (mouseY < this.y) {
+          this.height += this.y - mouseY;
+          this.y = mouseY;
         }
         break;
 
-      default:
+      case RIGHT_DOWN:
+        if (mouseX < this.minCoords.x) {
+          this.resizePoint = LEFT_DOWN;
+          this.setMinCoords();
+          this.setMaxCoords();
+        }
+
+        if (mouseY < this.minCoords.y) {
+          this.resizePoint = RIGHT_UP;
+          this.setMinCoords();
+          this.setMaxCoords();
+        }
+
+        if (mouseX > (this.x + this.width)) {
+          this.width += mouseX - (this.x + this.width);
+        }
+        else if (mouseX < (this.x + this.width)) {
+          this.width -= (this.x + this.width) - mouseX;
+        }
+
+        if (mouseY > (this.y + this.height)) {
+          this.height += mouseY - (this.y + this.height);
+        }
+        else if (mouseY < (this.y + this.height)) {
+          this.height -= (this.y + this.height) - mouseY;
+        }
         break;
+
     }
 
-    console.log("this X,Y("+this.x+","+this.y+")");
+    console.log("this x/y("+this.x+","+this.y+")");
     console.log("this width,height ("+this.width+","+this.height+")");
-    // console.log("this width,height("+this.width+","+this.height+")");
 
   },
 
@@ -296,6 +339,7 @@ var Rect = Shape.extend({
   },
 
   isMouseOver: function () {
+    console.log("isMouseOver");
     var mx = pjs.mouseX;
     var my = pjs.mouseY;
     var n = this.x <= mx && mx <= this.x + this.width &&
@@ -317,7 +361,7 @@ var Rect = Shape.extend({
     console.log("this width,height ("+this.width+","+this.height+")");
     console.log("aCoords: ", aCoords);
 
-    // TOP LEFT
+    // LEFT_UP
     x = this.x - 5;
     y = this.y - 5;
     w = x + 10;
@@ -336,13 +380,39 @@ var Rect = Shape.extend({
     console.log("y 1,2 ("+ y1+","+y2+")");
 
     if (x1 && x2 && y1 && y2) {
-      console.log("found a match! TOP_LEFT");
-      this.resizePoint = TOP_LEFT;
+      console.log("found a match! LEFT_UP");
+      this.resizePoint = LEFT_UP;
       return true;
     }
 
 
-    // TOP RIGHT
+    // LEFT_DOWN
+    x = this.x - 5;
+    y = this.y + this.height - 5;
+    w = x + 10;
+    h = y + 10;
+
+    x1 = aCoords.x >= x;
+    x2 = aCoords.x <= w;
+
+    y1 = aCoords.y >= y;
+    y2 = aCoords.y <= h;
+
+    console.log("x,y ("+x+","+y+")");
+    console.log("w,h ("+w+","+h+")");
+
+    console.log("x 1,2 ("+x1+","+x2+")");
+    console.log("y 1,2 ("+ y1+","+y2+")");
+
+    if (x1 && x2 && y1 && y2) {
+      console.log("found a match! LEFT_DOWN");
+      this.resizePoint = LEFT_DOWN;
+      return true;
+    }
+
+
+
+    // RIGHT_UP
     x = this.x + this.width - 5;
     y = this.y - 5;
     w = x + 10;
@@ -361,8 +431,33 @@ var Rect = Shape.extend({
     console.log("y 1,2 ("+ y1+","+y2+")");
 
     if (x1 && x2 && y1 && y2) {
-      console.log("found a match! TOP_RIGHT");
-      this.resizePoint = TOP_RIGHT;
+      console.log("found a match! RIGHT_UP");
+      this.resizePoint = RIGHT_UP;
+      return true;
+    }
+
+
+    // RIGHT_DOWN
+    x = this.x + this.width - 5;
+    y = this.y + this.height - 5;
+    w = x + 10;
+    h = y + 10;
+
+    x1 = aCoords.x >= x;
+    x2 = aCoords.x <= w;
+
+    y1 = aCoords.y >= y;
+    y2 = aCoords.y <= h;
+
+    console.log("x,y ("+x+","+y+")");
+    console.log("w,h ("+w+","+h+")");
+
+    console.log("x 1,2 ("+x1+","+x2+")");
+    console.log("y 1,2 ("+ y1+","+y2+")");
+
+    if (x1 && x2 && y1 && y2) {
+      console.log("found a match! RIGHT_DOWN");
+      this.resizePoint = RIGHT_DOWN;
       return true;
     }
 
