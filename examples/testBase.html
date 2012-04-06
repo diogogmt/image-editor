@@ -10,6 +10,115 @@
 <script src="../libs/Base.js"></script>
 <script src="testBase.js"></script>
 
+<script>
+
+window.Utils = {};
+
+(function (Utils)  {
+  Utils.Color = function (color) {
+    this._r = (color && color.r) || 255
+    this._g = (color && color.g) || 255
+    this._b = (color && color.b) || 255;
+
+    return {
+      "getColor": function () {
+      	return {
+	        "r": _r,
+	        "g": _g,
+	        "b": _b,
+	      };
+      },
+    };
+
+  };
+
+  Utils.Color.prototype.toString = function () {
+      console.log(this._r + "," + this._g + "," + this._b);
+  };
+
+
+  Utils.Canvas = function () {
+    console.log("canvas - constructor");
+
+    var _shapes = []
+      , _lineWeight
+      , _lineStyle
+      , _color
+      , _shapeType
+      , _currentState
+      , _buffer
+      , _states = [];
+
+    // _states[DEFAULT] = new DefaultState(this);
+    // _states[MOVE] = new MoveState(this);
+    // _states[CREATE] = new CreateState(this);
+    // _states[RESIZE] = new ResizeState(this);
+
+      this.getLineWeight = function () {
+        return _lineWeight;
+      };
+
+      // this.getLineStyle": function () {
+      //   return _lineStyle;
+      // },
+
+      // this.getColor": function () {
+      //   return _color;
+      // },
+
+      // "getShapeType": function () {
+      //   return _shapeType;
+      // },
+
+      // "getCurrentState": function () {
+      //   return _currentState;
+      // },
+
+      // "getBuffer": function () {
+      //   return _buffer;
+      // },
+
+      // "getStates": function () {
+      //   return _states;
+      // },
+
+
+      // "setLineWeight": function (aLineWeight) {
+      //   _lineWeight = aLineWeight;
+      // },
+
+      // "setLineStyle": function (aLineStyle) {
+      //   _lineStyle = aLineStyle;
+      // },
+
+      // "setColor": function (aColor) {
+      //   _color = aColor;
+      // },
+
+      // "setShapeType": function (aShapeType) {
+      //   _shapeType = aShapeType;
+      // },
+
+      // "setCurrentState": function (aCurrentState) {
+      //   _currentState = aCurrentState;
+      // },
+
+      // "setBuffer": function (aBuffer) {
+      //   _buffer = aBuffer;
+      // },
+
+      // "setStates": function (aStates) {
+      //   _states = aStates;
+      // },
+  }
+
+  Utils.Canvas.prototype.test = function () {
+  	console.log("Canvas - test");
+  	// console.log("this._color: ", this._color);
+  }
+
+}(window.Utils));
+</script>
 
 </body>
 </html>
