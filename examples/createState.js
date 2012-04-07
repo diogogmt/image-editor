@@ -8,15 +8,15 @@ var CreateState = Base.extend({
   },
 
   "constructor": function (canvas) {
-    console.log("Create State - constructor");
+    //console.log("Create State - constructor");
     this.canvas = canvas;
   },
 
   "start": function () {
-    console.log("CreateState - start");
-    console.log("shapeType: ", this.canvas.getShapeType());
+    //console.log("CreateState - start");
+    //console.log("shapeType: ", this.canvas.getShapeType());
     var that = this;
-
+    //console.log("that.canvas.getLineColor(): ", that.canvas.getLineColor());
     var shape = Utils.ShapeFactory.createShape(this.canvas.getShapeType(), {
       "x": pjs.mouseX,
       "y": pjs.mouseY,
@@ -25,12 +25,14 @@ var CreateState = Base.extend({
       "color": that.canvas.getColor(),
       "lineWeight": that.canvas.getLineWeight(),
       "lineStyle": that.canvas.getLineStyle(),
-      "selected": true,
+      "lineColor": that.canvas.getLineColor(),
+      "selected": false,
     });
     shape.setResizePoint(LEFT_UP);
     this.canvas.setOverlayShape(shape);
 
-    console.log("overlayShape: ", this.canvas.getOverlayShape());
+    //console.log("overlayShape: ", this.canvas.getOverlayShape());
+    //console.log("shape.getLineColor(): ", shape.getLineColor());
 
     this.canvas.getOverlayShape().setMaxCoords({
       "x": pjs.mouseX,

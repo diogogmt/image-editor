@@ -3,7 +3,7 @@ var MoveState = Base.extend({
   canvas: null,
   lastX: 0,
   lastY: 0,
-  "selectedShapes": new Array(),
+  selectedShapes: [],
 
   "constructor": function (canvas) {
     this.canvas = canvas
@@ -13,8 +13,8 @@ var MoveState = Base.extend({
     var that = this;
     return {
       left: function () {
-        // console.log("canMove.left");
-        // console.log("that.movingShapes: ", that.movingShapes);
+        // //console.log("canMove.left");
+        // //console.log("that.movingShapes: ", that.movingShapes);
 
         return (that.movingShapes.min.x.getX() > 0)
           ? true
@@ -55,6 +55,7 @@ var MoveState = Base.extend({
   // start should get all the shapes that are selected
   // during should loop through the shapes array created in start
   "start": function (shape) {
+    console.log("MoveState - start");
     this.state = MOVE;
 
     this.lastX = pjs.mouseX;
@@ -109,7 +110,7 @@ var MoveState = Base.extend({
   },
 
   "during": function () {
-    console.log("duruing move");
+    //console.log("duruing move");
     var i ;
     var dimension;
     var shape;
@@ -143,11 +144,13 @@ var MoveState = Base.extend({
     this.lastX = pjs.mouseX;
     this.lastY = pjs.mouseY;
 
+    //console.log("tis.selectedShapes", this.selectedShapes);
     for (i = 0; i < end; i++) {
+      //console.log("i: ", i);
       shape = this.selectedShapes[i];
       dimension = shape.getDimensions();
       coords = shape.getCoords();
-
+      //console.log("shape: ", shape);
 
       if (movingTo.left && this.canMove().left()
         || movingTo.right && this.canMove().right()) {
@@ -160,7 +163,7 @@ var MoveState = Base.extend({
       }
 
 
-      console.log("coords: ", coords);
+      //console.log("coords: ", coords);
       shape.setCoords({
         "x": coords.x,
         "y": coords.y,
@@ -169,6 +172,7 @@ var MoveState = Base.extend({
   },
 
   "end": function () {
+    this.selectedShapes = [];
     this.state = DEFAULT;
   },
 

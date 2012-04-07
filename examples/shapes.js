@@ -11,15 +11,17 @@ var Shape = Base.extend({
   "zindex": 0,
   "lineStyle": 0,
   "lineWeight": 0,
+  "lineColor": 0,
   "selected": true,
 
   "constructor": function (opts) {
-    console.log("Shape - constructor");
-    console.log("opts: ", opts);
+    //console.log("Shape - constructor");
+    //console.log("opts: ", opts);
     this.x = opts.x;
     this.y = opts.y
     this.lineStyle = opts.lineStyle;
     this.lineWeight = opts.lineWeight;
+    this.lineColor = opts.lineColor;
     this.color = opts.color;
     this.selected = opts.selected
   },
@@ -34,6 +36,8 @@ var Shape = Base.extend({
   },
 
   "setColor": function (aColor) {
+    //console.log("Shape - setColor");
+    //console.log("aColor: ", aColor);
     this.color = aColor;
   },
 
@@ -49,14 +53,20 @@ var Shape = Base.extend({
     this.lineWeight = aLineWeight;
   },
 
+  "setLineColor": function (aLineColor) {
+    this.lineColor = aLineColor;
+  },
+
   "setSelected": function (aSelected) {
     this.selected = aSelected;
   },
 
   "setCoords": function (aCoords) {
-    // console.log("setCoords");
+    //console.log("Shape - setCoords");
+    //console.log("aCoords: ", aCoords);
     this.setX(aCoords.x);
     this.setY(aCoords.y);
+    return this;
   },
 
   "setX": function (aX) {
@@ -88,11 +98,16 @@ var Shape = Base.extend({
     return this.lineWeight;
   },
 
+  "getLineColor": function () {
+    return this.lineColor;
+  },
+
   "getSelected": function () {
     return this.selected;
   },
 
   "getCoords": function () {
+    //console.log("Shape - getCoords");
     var that = this;
     return {
       "x": that.getX(),

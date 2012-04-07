@@ -2,9 +2,9 @@
   Utils.ShapeFactory = {};
   function ShapeFactory () {
     this.createShape = function (aType, options) {
-      console.log("shapeFactory - createShape");
-      console.log("aType: ", aType);
-      console.log("options: ", options);
+      //console.log("shapeFactory - createShape");
+      //console.log("aType: ", aType);
+      //console.log("options: ", options);
       var shape;
       switch (aType) {
         case RECT:

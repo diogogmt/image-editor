@@ -1,10 +1,18 @@
-
+<!DOCTYPE html>
 <html>
 <head>
   <title>Stack</title>
 
   <style>
-
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #e5e5e5;
+    }
+    #glibcanvas {
+      width: 800px;
+      height: 800px;
+    }
   </style>
 </head>
 <body>
@@ -16,9 +24,10 @@
 
     <button id="start">Start</button>
     <button id="stop">Stop</button>
-    <button id="rect">Rect</button>
     <button id="do">Do</button>
     <button id="undo">Undo</button>
+    <button id="rect">Rect</button>
+    <button id="color">Change Color</button>
 
     <br />
     <br />
@@ -40,6 +49,7 @@
 
 </script>
 
+<script src="commands.js"></script>
 <script src="color.js"></script>
 <script src="shapeFactory.js"></script>
 <script src="shapes.js"></script>
@@ -62,10 +72,24 @@
       pjs.noLoop();
     });
 
+    $("#do").click(function (e) {
+      console.log("redo click");
+      Utils.UndoManager.getInstance().redo();
+    });
+
+    $("#undo").click(function (e) {
+      console.log("undo click");
+      Utils.UndoManager.getInstance().undo();
+    });
+
     $("#rect").click(function (e) {
       console.log("rect click listener");
       controller.perform("setCanvasState", [CREATE,RECT]);
+    });
 
+    $("#color").click(function (e) {
+      console.log("color click");
+      controller.perform("setColor", [Utils.generateColor()]);
     });
 
     var c = document.getElementById('glibcanvas');
@@ -74,8 +98,8 @@
     var canvas = Utils.Canvas.getInstance();
     var controller = Utils.Controller.getInstance();
     pjs.setup = function() {
-      pjs.size(500, 500);
-      pjs.frameRate(64);
+      pjs.size(800, 800);
+      pjs.frameRate(24);
       pjs.stroke("#003300");
       pjs.fill("#0000FF");
       var fontA = pjs.loadFont("Arial");
@@ -84,7 +108,7 @@
 
     pjs.draw = function() {
       // console.log("pjs draw");
-      pjs.background(33, 66, 99);
+      pjs.background(255, 255, 255);
       canvas.draw();
     };
 
@@ -101,7 +125,7 @@
     },
 
     pjs.mouseMoved = function () {
-      // console.log("mouse x,y ("+pjs.mouseX+","+pjs.mouseY+")");
+
     },
     pjs.setup();
 

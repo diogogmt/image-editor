@@ -9,6 +9,7 @@
 
     return {
       register: function( command ){
+        console.log("UndoManager - register");
         if ( command.execute && command.undo ){
           _undoStack.push( command );
           _redoStack.length = 0;
