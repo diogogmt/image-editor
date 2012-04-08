@@ -13,6 +13,7 @@ var Shape = Base.extend({
   "lineWeight": 0,
   "lineColor": 0,
   "selected": true,
+  "group": false,
 
   "constructor": function (opts) {
     //console.log("Shape - constructor");
@@ -23,7 +24,8 @@ var Shape = Base.extend({
     this.lineWeight = opts.lineWeight;
     this.lineColor = opts.lineColor;
     this.color = opts.color;
-    this.selected = opts.selected
+    this.selected = opts.selected;
+    this.group = opts.group;
   },
 
   // Setters
@@ -61,6 +63,10 @@ var Shape = Base.extend({
     this.selected = aSelected;
   },
 
+  "setGroup": function (aGroup) {
+    this.group = aGroup;
+  },
+
   "setCoords": function (aCoords) {
     //console.log("Shape - setCoords");
     //console.log("aCoords: ", aCoords);
@@ -69,9 +75,7 @@ var Shape = Base.extend({
     return this;
   },
 
-  "setX": function (aX) {
-    this.x = aX;
-  },
+
 
   // Getters
   "getX": function () {
@@ -106,6 +110,10 @@ var Shape = Base.extend({
     return this.selected;
   },
 
+  "getGroup": function () {
+    return this.group;
+  },
+
   "getCoords": function () {
     //console.log("Shape - getCoords");
     var that = this;
@@ -117,6 +125,10 @@ var Shape = Base.extend({
 
   "isSelected": function () {
     return this.selected;
+  },
+
+  "isGroup": function () {
+    return this.group;
   },
 
 }); // End Shape

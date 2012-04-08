@@ -42,7 +42,7 @@ var ResizeState = Base.extend({
     //console.log("ResizeState - end");
     //console.log("this.selectedShape: ", this.selectedShape);
     //console.log("beforeResize: ", this.beforeResize);
-    this.canvas.resizeShape(this.selectedShape, beforeResize)
+    this.canvas.resizeShape(this.selectedShape, this.beforeResize)
     this.canvas.setCurrentState(DEFAULT);
   },
 

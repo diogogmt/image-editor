@@ -4,176 +4,112 @@ var MoveState = Base.extend({
   lastX: 0,
   lastY: 0,
   selectedShapes: [],
+  moved: false,
+  dx: null,
+  dy: null,
 
   "constructor": function (canvas) {
     this.canvas = canvas
   },
 
-  "canMove": function () {
-    var that = this;
-    return {
-      left: function () {
-        // //console.log("canMove.left");
-        // //console.log("that.movingShapes: ", that.movingShapes);
 
-        return (that.movingShapes.min.x.getX() > 0)
-          ? true
-          : false;
-      },
-      up: function () {
-        return (that.movingShapes.min.y.getY() > 0)
-          ? true
-          : false;
-      },
-      right: function () {
-        return (that.movingShapes.max.x.getX() < pjs.width)
-          ? true
-          : false;
-      },
-      down: function () {
-        return (that.movingShapes.max.y.getY() < pjs.height)
-          ? true
-          : false;
-      },
-    }
-  },
-
-  "movingShapes": {
-    min: {
-      x: null,
-      y: null,
-    },
-
-    max: {
-      x: null,
-      y: null,
-    }
-  },
-
-  // Move
-  // Use shape array instead of shapes
-  // start should get all the shapes that are selected
-  // during should loop through the shapes array created in start
   "start": function (shape) {
     console.log("MoveState - start");
-    this.state = MOVE;
+    this.moved = false;
+    
 
-    this.lastX = pjs.mouseX;
-    this.lastY = pjs.mouseY;
+    var shape = this.canvas.getShapeGroup();
+    var dimension = shape.getDimensions();
+    var coords = shape.getCoords();
+    dx = (coords.x + dimension.width) - pjs.mouseX;
+    dy = (coords.y + dimension.height) - pjs.mouseY;
 
-    var i
-      , shapes = this.canvas.getShapes()
-      , end = shapes.length;
-    for (i = 0; i < end; i++) {
-      if (shapes[i].isSelected()) {
-        this.selectedShapes.push(shapes[i]);
-      }
-    }
+    this.lastX = coords.x;
+    this.lastY = coords.y;
 
-    end = this.selectedShapes.length;
-    // Find the max and min XY for the shapes
-    for (i = 0; i < end; i++) {
-      shape = this.selectedShapes[i];
-      dimension = shape.getDimensions();
-      coords = shape.getCoords();
-
-      // Find min X/Y shape
-      if (!i) {
-        this.movingShapes.min.x = shape;
-      }
-      else if ((coords.x < this.movingShapes.min.x)) {
-        this.movingShapes.min.x = shape;
-      }
-
-      if (!i) {
-        this.movingShapes.min.y = shape;
-      }
-      else if ((coords.y < this.movingShapes.min.y)) {
-        this.movingShapes.min.y = shape;
-      }
-
-      // Find max X/Y shape
-      if (!i) {
-        this.movingShapes.max.x = shape;
-      }
-      else if (coords.x + dimension.width > this.movingShapes.max.x) {
-        this.movingShapes.max.x = shape;
-      }
-
-      if (!i) {
-        this.movingShapes.max.y = shape;
-      }
-      else if (coords.x + dimension.height > this.movingShapes.max.y) {
-        this.movingShapes.max.y = shape;
-      }
-    }
+    console.log("dx, dy (" + dx + "," + dy + ")\n");
   },
 
   "during": function () {
-    //console.log("duruing move");
-    var i ;
-    var dimension;
-    var shape;
-    var end = this.selectedShapes.length;
-    var coords = {
-      "x": 0,
-      "y": 0
-    };
-    var movingTo = {
-      "left": false,
-      "up": false,
-      "right": false,
-      "down": false,
-    };
+    //console.log("MoveState - during");
+    var i
+      , dimension
+      , shape
+      , shapes = this.canvas.getSelectedShapes()
+      , end = shapes.length;
 
 
-    // Find which direction the shape is moving to
-    if (pjs.mouseX > this.lastX) {
-      movingTo.right = true;
-    }
-    else if (pjs.mouseX < this.lastX) {
-      movingTo.left = true;
-    }
+    this.moved = true;
 
-    if (pjs.mouseY > this.lastY) {
-      movingTo.down = true;
-    }
-    else if (pjs.mouseY < this.lastY) {
-      movingTo.up = true;
-    }
-    this.lastX = pjs.mouseX;
-    this.lastY = pjs.mouseY;
-
-    //console.log("tis.selectedShapes", this.selectedShapes);
     for (i = 0; i < end; i++) {
-      //console.log("i: ", i);
-      shape = this.selectedShapes[i];
+      shape = shapes[i];
       dimension = shape.getDimensions();
       coords = shape.getCoords();
-      //console.log("shape: ", shape);
+      shapeGroup = this.canvas.getShapeGroup();
 
-      if (movingTo.left && this.canMove().left()
-        || movingTo.right && this.canMove().right()) {
-        coords.x =  pjs.mouseX - (dimension.width / 2)
-      }
+      console.log("\n**coords x,y (" + coords.x + "," +
+        coords.y + ")");
+      console.log("dim w,h (" + dimension.width + "," +
+        dimension.height + ")");
+      console.log("pjs x,y (" + pjs.mouseX + "," +
+        pjs.mouseY + ")");
+      console.log("pjs w,h (" + pjs.width + "," +
+        pjs.height + ")");
 
-      if (movingTo.up && this.canMove().up()
-        || movingTo.down && this.canMove().down()) {
-        coords.y  =  pjs.mouseY - (dimension.height / 2);
-      }
+      tempW = pjs.mouseX + dx;
+      tempY = pjs.mouseY + dy;
 
+      x = Math.abs(dimension.width - tempW);
+      y = Math.abs(dimension.height - tempY);
 
-      //console.log("coords: ", coords);
+      dx = (x + dimension.width) - pjs.mouseX;
+      dy = (y + dimension.height) - pjs.mouseY;
+      console.log("tempW, tempH (" + tempW + "," +
+        tempY + ")");
+      console.log("dx, dy (" + dx + "," + dy + ")\n");
+      console.log("x, y (" + x + "," + y + ")");
+
+      sx = coords.x;
+      sy = coords.y;
+
+      sx += Math.abs(shapeGroup.getX() - this.lastX);
+      sy += Math.abs(shapeGroup.getY() - this.lastY);
+      console.log("sx, sy (" + sx + "," + sy + ")");
+
       shape.setCoords({
-        "x": coords.x,
-        "y": coords.y,
+        "x": x,
+        "y": y,
+      });
+      shapeGroup.setCoords({
+        "x": x,
+        "y": y,
       });
     }
+
+    // Not using. Maybe delete?
+    this.lastX = shapeGroup.getX();
+    this.lastY = shapeGroup.getY();
   },
 
   "end": function () {
-    this.selectedShapes = [];
-    this.state = DEFAULT;
+    console.log("MoveState - end");
+    console.log("moved: ", this.moved);
+    // var shape;
+    // if (!this.moved) {
+    //   console.log("!this.moved");
+    //   shape = this.canvas.getShapeBehindGroup();
+    //   console.log("shape: ", shape);
+    //   if (shape) {
+    //     this.canvas.deselectShapes();
+    //     shape.setSelected(true);
+    //     this.canvas.addSelectedShape(shape);
+    //     this.canvas.updateShapeGroup();
+    //   }
+    //   else {
+    //     this.canvas.deselectShapes();
+    //     this.canvas.updateShapeGroup();
+    //   }
+    // }
   },
 
 });

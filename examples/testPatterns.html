@@ -45,6 +45,8 @@
   , CREATE = 3
   , RESIZE = 4;
 
+  const CTRL_KEY = 17;
+
   window.Utils = {};
 
 </script>
@@ -99,7 +101,7 @@
     var controller = Utils.Controller.getInstance();
     pjs.setup = function() {
       pjs.size(800, 800);
-      pjs.frameRate(24);
+      pjs.frameRate(200);
       pjs.stroke("#003300");
       pjs.fill("#0000FF");
       var fontA = pjs.loadFont("Arial");
@@ -126,6 +128,13 @@
 
     pjs.mouseMoved = function () {
 
+    },
+
+    pjs.keyReleased = function () {
+      console.log("pjs - keyReleased");
+      pjs.keyCode = null;
+
+      console.log("keyCode: ", pjs.keyCode);
     },
     pjs.setup();
 

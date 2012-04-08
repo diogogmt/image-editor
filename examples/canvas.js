@@ -5,7 +5,7 @@
   var _canvas;
   // Canvas
   function Canvas () {
-    ////console.log("canvas - constructor");
+    //////console.log("canvas - constructor");
 
     var _shapes = []
       , _lineWeight
@@ -17,7 +17,9 @@
       , _buffer
       , _states = []
       , _overlayShape = null
-      , _shapeGroup = null;
+      , _shapeGroup = null
+      , _selectedShapes = []
+      , _shapeBehindGroup;
 
     _states[DEFAULT] = new DefaultState(this);
     _states[MOVE] = new MoveState(this);
@@ -31,123 +33,188 @@
       "b": 255,
     })
 
-    this.getSelectedShapes = function () {
-      ////console.log("Canvas - setSelectedShapesColor");
-      var end = _shapes.length
-        , selectedShapes = [];
+
+    this.getShapeFromPointer = function() {
+      //console.log("Canvas - getShapeFromPointer");
+
+      var i
+        , end = _shapes.length
+        , shape
+        , msg = {
+            "obj": null,
+            "move": false,
+            "resize": false,
+            "group": false
+        };
+
       for (i = 0; i < end; i++) {
-        if (_shapes[i].isSelected()) {
-          selectedShapes.push(_shapes[i]);
+        shape = _shapes[i];
+        if (shape.isMouseOver()) {
+          msg.obj = shape;
+          msg.move = true;
+          break;
+        }
+        else if (shape.shouldResize()) {
+          msg.obj = shape;
+          msg.resize = true;
+          break;
         }
       }
-      return selectedShapes;
+
+      return msg;
+    }
+
+    this.addSelectedShape = function (shape) {
+      //console.log("Canvas - addSelectedShape");
+      //console.log("shape: ", shape);
+      _selectedShapes.push(shape);
+    };
+
+    this.removeSelectedShape = function (shape) {
+      //console.log("Canvas - removeSelectedShape");
+      _selectedShapes.forEach(function (element, index, array) {
+        // //////console.log("shape === element ? ", shape === element);
+        if (shape === element) {
+          // //////console.log("removing shape");
+          _selectedShapes.splice(index, 1);
+        }
+      });
+    };
+
+    this.deselectShapes = function () {
+      //console.log("Canvas - deselectShapes");
+      var i
+        , end = _selectedShapes.length;
+
+      for (i = 0; i < end; i++) {
+        _selectedShapes[i].setSelected(false);
+      }
+      _selectedShapes = [];
     };
 
     this.addShape = function (shape) {
-      ////console.log("Canvas - addShape");
+      //console.log("Canvas - addShape");
       _shapes.push(shape);
+      if (shape.isSelected()) {
+        _selectedShapes.push(shape);
+      }
     };
 
     this.removeShape = function (shape) {
-      ////console.log("Canvas - removeShape");
+      //////console.log("Canvas - removeShape");
       _shapes.forEach(function (element, index, array) {
-        // ////console.log("shape === element ? ", shape === element);
+        // //////console.log("shape === element ? ", shape === element);
         if (shape === element) {
-          // ////console.log("removing shape");
+          // //////console.log("removing shape");
           _shapes.splice(index, 1);
         }
       });
     };
 
-    this.addToShapeGroup = function (shape) {
-      console.log("Canvas - addToShapeGroup");
+    this.updateShapeGroup = function () {
+      console.log("Canvas - updateShapeGroup");
       console.log("!_shapeGroup: ", !_shapeGroup);
-      if (!_shapeGroup) {
-        _shapeGroup = Utils.ShapeFactory.createShape(RECT, {
-          "x": shape.getX(),
-          "y": shape.getY(),
-          "width": shape.getWidth(),
-          "height": shape.getHeight(),
-          "color": this.getColor(),
-          "lineWeight": this.getLineWeight(),
-          "lineStyle": this.getLineStyle(),
-          "lineColor": this.getLineColor(),
-          "selected": true,
-        });
+      console.log("_selectedShapes: ", _selectedShapes);
+
+      var i
+        , end = _selectedShapes.length
+        , shape
+        , group = null
+        , bounds = {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null,
+          };
+
+      if (!end) {
+        _shapeGroup = null;
+        return;
       }
-      else {
+
+      for (i = 0; i < end; i++) {
+        shape = _selectedShapes[i];
+        dimension = shape.getDimensions();
+        coords = shape.getCoords();
+        // console.log("\ncoords x,y ("+coords.x+","+coords.y+")");
+        // console.log("dim width,height ("+dimension.width+","+dimension.height+")");
+        oldX = bounds.x;
+        oldY = bounds.y;
         // Find min X/Y shape
-        console.log("_shapeGroup xy("+_shapeGroup.getX()+","+
-          _shapeGroup.getY()+")");
-        console.log("_shapeGroup width,height("+_shapeGroup.getWidth()+","+
-          _shapeGroup.getHeight()+")");
-
-
-        console.log("shape xy("+shape.getX()+","+
-          shape.getY()+")");
-        console.log("shape width,height("+shape.getWidth()+","+
-          shape.getHeight()+")");
-
-        var group = {
-          "x": _shapeGroup.getX(),
-          "y": _shapeGroup.getY(),
-          "w": _shapeGroup.getWidth(),
-          "h": _shapeGroup.getHeight(),
-        };
-
-        var single = {
-          "x": shape.getX(),
-          "y": shape.getY(),
-          "w": shape.getWidth(),
-          "h": shape.getHeight(),
+        if (!i) {
+          bounds.x = shape.getX();
+        }
+        else if ((coords.x < bounds.x)) {
+          // console.log("coords.x < bounds.x")
+          bounds.x = shape.getX();
         }
 
-        if (single.x < group.x) {
-          _shapeGroup.setWidth((group.x + group.w) - single.x);
-          _shapeGroup.setX(single.x);
+        if (!i) {
+          bounds.y = shape.getY();
+        }
+        else if ((coords.y < bounds.y)) {
+          // console.log("coords.y < bounds.y")
+          bounds.y = shape.getY();
+        }
+
+        // Find max X/Y shape
+        if (!i) {
+          bounds.width = shape.getWidth();
+        }
+        else if (coords.x + dimension.width > bounds.width + oldX) {
+          // console.log("coords.x + dimension.width > bounds.width + oldX")
+          bounds.width = shape.getWidth() + shape.getX() - bounds.x;
         }
         else {
-          _shapeGroup.setWidth((single.x + single.w) - group.x);
+          bounds.width += oldX - bounds.x;
         }
 
-        if (single.y < group.y) {
-          _shapeGroup.setHeight((group.y + group.h) - single.y);
-          _shapeGroup.setY(single.y);
+        if (!i) {
+          bounds.height = shape.getHeight();
+        }
+        else if (coords.y + dimension.height > bounds.height + oldY) {
+          // console.log("coords.y + dimension.height > bounds.height = oldY")
+          bounds.height = shape.getHeight() + shape.getY() - bounds.y;
         }
         else {
-          _shapeGroup.setHeight((single.y + single.h) - group.y);
+          bounds.height += oldY - bounds.y;
         }
-
-        console.log("_shapeGroup xy("+_shapeGroup.getX()+","+
-          _shapeGroup.getY()+")");
-        console.log("_shapeGroup width,height("+_shapeGroup.getWidth()+","+
-          _shapeGroup.getHeight()+")");
       }
+
+      // console.log("bounds x,y ("+bounds.x+","+bounds.y+")");
+      // console.log("bounds width,height ("+bounds.width+","+bounds.height+")");
+      _shapeGroup = Utils.ShapeFactory.createShape(RECT, {
+          "x": bounds.x,
+          "y": bounds.y,
+          "width": bounds.width,
+          "height": bounds.height,
+          "color": null,
+          "lineWeight": null,
+          "lineStyle": null,
+          "lineColor": null,
+          "selected": true,
+          "group": true,
+        });
     }
 
     this.saveOverlayShape = function () {
+      _overlayShape.setSelected(true);
       Utils.Controller.getInstance().perform("createShape",
         _overlayShape);
+
       _overlayShape = null;
     };
 
     this.resizeShape = function (shape, options) {
-      //console.log("Canvas - resizeShape")
+      ////console.log("Canvas - resizeShape")
+      this.updateShapeGroup();
       Utils.Controller.getInstance().perform("resizeShape",
         [shape, options]);
     };
 
-    this.deselectShapes = function () {
-      var i;
-      var end = _shapes.length;
-      for (i = 0; i < end; i++) {
-        _shapes[i].setSelected(false);
-      }
-      _shapeGroup = null;
-    };
 
     this.isResize = function () {
-      ////console.log("isResize");
+      //////console.log("isResize");
 
       var i;
       var end = _shapes.length;
@@ -170,16 +237,23 @@
         _shapes.push(shape);
       }
 
-      ////console.log("resizeFlag: ", resizeFlag);
+      //////console.log("resizeFlag: ", resizeFlag);
       return resizeFlag;
 
     };
 
     this.isMove = function () {
-      console.log("isMove");
+      //console.log("isMove");
       var i;
       var end =  _shapes.length;
       var moveFlag = false;
+
+      if (_shapeGroup) {
+        if (_shapeGroup.isMouseOver()) {
+          return true;
+        }
+      }
+
       for (i = 0; i < end; i++) {
         shape = _shapes[i];
         if(shape.isMouseOver()) {
@@ -191,14 +265,11 @@
             shape.setSelected(true);
             this.addToShapeGroup(shape);
           }
-          else {
-            break;
-          }
         }
       }
 
-      ////console.log("moveFlag: ", moveFlag);
-      ////console.log("this.shapes.length: ", _shapes.length);
+      //////console.log("moveFlag: ", moveFlag);
+      //////console.log("this.shapes.length: ", _shapes.length);
       return moveFlag;
 
     };
@@ -211,22 +282,55 @@
 
     };
 
+    this.determineMove = function (shape) {
+      console.log("Canvas - determineMove");
+      if (CTRL_KEY === pjs.keyCode && !shape.isSelected()) {
+        console.log("CTRL_KEY === pjs.keyCode && !shape.isSelected()");
+        shape.setSelected(true);
+        this.addSelectedShape(shape);
+        this.updateShapeGroup();
+      }
+      else if (CTRL_KEY === pjs.keyCode && shape.isSelected()) {
+        console.log("CTRL_KEY === pjs.keyCode && shape.isSelected()")
+        shape.setSelected(false);
+        this.removeSelectedShape(shape);
+        this.updateShapeGroup();
+      }
+      else if (CTRL_KEY !== pjs.keyCode) {
+        console.log("CTRL_KEY !== pjs.keyCode")
+        this.deselectShapes();
+        shape.setSelected(true);
+        this.addSelectedShape(shape);
+        this.updateShapeGroup();
+        // _shapeBehindGroup = shape;
+      }
+    }
+
     this.determineState = function () {
-      ////console.log("determineState");
-      ////console.log("this.currentState: ", _currentState);
+      console.log("Canvas - determineState");
+      console.log("this.currentState: ", _currentState);
       if (this.isCreate()) {
         return CREATE;
-      } else if (this.isResize()) {
+      }
+      shape = this.getShapeFromPointer();
+      console.log("shape: ", shape);
+     if (!shape.obj) {
+        console.log("!shape.obj");
+        this.deselectShapes();
+        this.updateShapeGroup();
+        return DEFAULT;
+      }
+      else if (shape.resize) {
         return RESIZE;
-      } else if (this.isMove()) {
+      }
+      else if (shape.move) {
+        this.determineMove(shape.obj);
         return MOVE;
       }
-      this.deselectShapes();
-      return DEFAULT;
     };
 
     this.draw = function () {
-      // ////console.log("canvas draw");
+      // //////console.log("canvas draw");
       var i
         , end = _shapes.length;
 
@@ -235,16 +339,15 @@
       for (i = 0; i < end; i++) {
         _shapes[i].draw();
       }
-
       _overlayShape && _overlayShape.draw();
     };
 
     this.mousePressed = function () {
-      ////console.log("Canvas - mousePressed");
-      ////console.log("this.shapes.length: ", _shapes.length);
-      ////console.log("this: ", this);
+      //////console.log("Canvas - mousePressed");
+      //////console.log("this.shapes.length: ", _shapes.length);
+      //////console.log("this: ", this);
 
-      // ////console.log("this.determineState(): ", this.determineState());
+      // //////console.log("this.determineState(): ", this.determineState());
       this.setCurrentState(this.determineState());
 
       _states[_currentState].start();
@@ -255,12 +358,25 @@
     };
 
     this.mouseReleased = function () {
+      // //console.log("Canvas - mouseReleased");
+      // //console.log("keyCode: ", pjs.keyCode);
       _states[_currentState].end();
     };
 
-
     this.getShapes = function () {
       return _shapes;
+    };
+
+    this.getSelectedShapes = function () {
+      return _selectedShapes;
+    };
+
+    this.getShapeGroup = function () {
+      return _shapeGroup;
+    };
+
+    this.getShapeBehindGroup = function () {
+      return _shapeBehindGroup;
     };
 
     this.getLineWeight = function () {
@@ -305,6 +421,18 @@
       _shapes = aShapes;
     };
 
+    this.setShapeBehindGroup = function (aShapeBehindGroup) {
+      _shapeBehindGroup = aShapeBehindGroup;
+    };
+
+    this.setSelectedShapes = function (aSelectedShapes) {
+      _selectedShapes = aSelectedShapes;
+    };
+
+    this.setShapeGroup = function (aShapeGroup) {
+      _shapeGroup = aShapeGroup;
+    };
+
     this.setLineWeight = function (aLineWeight) {
       _lineWeight = aLineWeight;
     };
@@ -327,6 +455,12 @@
 
     this.setCurrentState = function (aCurrentState) {
       _currentState = aCurrentState;
+      switch (aCurrentState) {
+        case DEFAULT:
+        case CREATE:
+          this.deselectShapes();
+          break;
+      }
     };
 
     this.setBuffer = function (aBuffer) {

@@ -28,6 +28,7 @@ var Rect = Shape.extend({
       "lineWeight": opts.lineWeight,
       "lineColor": opts.lineColor,
       "selected": opts.selected,
+      "group": opts.group,
     });
   },
 
@@ -174,21 +175,33 @@ var Rect = Shape.extend({
     // //console.log("this.getLineColor(): ", this.getLineColor());
     // //console.log("this.lineColor: ", this.lineColor);
 
-    var shapeColor = this.color.getColor()
-      , lineColor = this.getLineColor().getColor();
+    var shapeColor
+      , lineColor;
     // //console.log("lineColor: ", lineColor);
-    pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
-    // pjs.stroke(204, 102, 0);
-    pjs.fill(shapeColor.r, shapeColor.g, shapeColor.b);
-    pjs.rect(this.x, this.y, this.width, this.height);
-
-    if (this.isSelected()) {
+    // console.log("this.isGroup(): ", this.isGroup());
+    if (this.isGroup()) {
+      // console.log("this.isGroup(): ", this.isGroup());
+      // console.log("x,y ("+this.x+","+this.y+")");
+      // console.log("width,height ("+this.width+","+this.height+")");
       pjs.fill(153);
       pjs.rect(this.x - 5, this.y - 5, 10, 10);
       pjs.rect(this.x + this.width - 5, this.y - 5, 10, 10);
 
       pjs.rect(this.x - 5, this.y + this.height - 5, 10, 10);
       pjs.rect(this.x + this.width -  5, this.y + this.height - 5, 10, 10);
+    }
+    else {
+      shapeColor = this.color.getColor();
+      lineColor = this.getLineColor().getColor();
+      pjs.fill(shapeColor.r, shapeColor.g, shapeColor.b);
+
+      if (this.isSelected()) {
+        // pjs.fill(0, 0, 0);
+      }
+
+      pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
+      // pjs.stroke(204, 102, 0);
+      pjs.rect(this.x, this.y, this.width, this.height);
     }
 
   },
@@ -207,7 +220,10 @@ var Rect = Shape.extend({
     //console.log("this x,y ("+this.x+","+this.y+")");
     //console.log("this width,height ("+this.width+","+this.height+")");
     //console.log("aCoords: ", aCoords);
-
+    aCoords = {
+      "x": pjs.mouseX,
+      "y": pjs.mouseY,
+    };
     // LEFT_UP
     x = this.x - 5;
     y = this.y - 5;

@@ -27,6 +27,7 @@ var CreateState = Base.extend({
       "lineStyle": that.canvas.getLineStyle(),
       "lineColor": that.canvas.getLineColor(),
       "selected": false,
+      "group": false,
     });
     shape.setResizePoint(LEFT_UP);
     this.canvas.setOverlayShape(shape);
