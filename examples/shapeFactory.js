@@ -9,6 +9,10 @@
       switch (aType) {
         case RECT:
           shape = new Rect(options);
+          break;
+        case CIRCLE:
+          shape = new Circle(options);
+          break;
       }
       return shape;
     };
