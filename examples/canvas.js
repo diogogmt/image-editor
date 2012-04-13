@@ -48,14 +48,14 @@
 
       for (i = 0; i < end; i++) {
         shape = _shapes[i];
-        if (shape.isMouseOver()) {
-          msg.obj = shape;
-          msg.move = true;
-          break;
-        }
-        else if (shape.shouldResize()) {
+        if (shape.shouldResize()) {
           msg.obj = shape;
           msg.resize = true;
+          break;
+        }
+        else if (shape.isMouseOver()) {
+          msg.obj = shape;
+          msg.move = true;
           break;
         }
       }
