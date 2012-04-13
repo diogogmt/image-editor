@@ -45,15 +45,15 @@ var Rect = Shape.extend({
     // //console.log("mouse x,y ("+mouseX+","+mouseY+")");
 
     switch (this.resizePoint) {
-      case LEFT_UP:
+      case LEFT_TOP:
         if (mouseY > this.maxCoords.y) {
-          this.resizePoint = LEFT_DOWN;
+          this.resizePoint = LEFT_BOTTOM;
           this.setMinCoords();
           this.setMaxCoords();
         }
 
         if (mouseX > this.maxCoords.x) {
-          this.resizePoint = RIGHT_UP;
+          this.resizePoint = RIGHT_TOP;
           this.setMinCoords();
           this.setMaxCoords();
         }
@@ -78,14 +78,14 @@ var Rect = Shape.extend({
 
 
         break;
-      case LEFT_DOWN:
+      case LEFT_BOTTOM:
         if (mouseY < this.y) {
-          this.resizePoint = LEFT_UP;
+          this.resizePoint = LEFT_TOP;
           this.setMaxCoords();
         }
 
         if (mouseX > this.maxCoords.x) {
-          this.resizePoint = RIGHT_DOWN;
+          this.resizePoint = RIGHT_BOTTOM;
           this.setMinCoords();
         }
 
@@ -106,14 +106,14 @@ var Rect = Shape.extend({
         }
         break;
 
-      case RIGHT_UP:
+      case RIGHT_TOP:
         if (mouseX < this.minCoords.x) {
-          this.resizePoint = LEFT_UP;
+          this.resizePoint = LEFT_TOP;
           this.setMaxCoords();
         }
 
         if (mouseY > this.maxCoords.y) {
-          this.resizePoint = RIGHT_DOWN;
+          this.resizePoint = RIGHT_BOTTOM;
           this.setMaxCoords();
           this.setMinCoords();
         }
@@ -135,15 +135,15 @@ var Rect = Shape.extend({
         }
         break;
 
-      case RIGHT_DOWN:
+      case RIGHT_BOTTOM:
         if (mouseX < this.minCoords.x) {
-          this.resizePoint = LEFT_DOWN;
+          this.resizePoint = LEFT_BOTTOM;
           this.setMinCoords();
           this.setMaxCoords();
         }
 
         if (mouseY < this.minCoords.y) {
-          this.resizePoint = RIGHT_UP;
+          this.resizePoint = RIGHT_TOP;
           this.setMinCoords();
           this.setMaxCoords();
         }
@@ -170,39 +170,69 @@ var Rect = Shape.extend({
 
   },
 
-  "draw": function () {
-    // //console.log("shape draw");
+  "drawResizeRects": function () {
+    // console.log("this.isGroup(): ", this.isGroup());
+    // console.log("x,y ("+this.x+","+this.y+")");
+    // console.log("width,height ("+this.width+","+this.height+")");
+    pjs.noStroke();
+    pjs.fill(153);
+    // LEFT,TOP RECT
+    pjs.rect(this.resizeRect.getLeftX(this.x),
+      this.resizeRect.getTopY(this.y),
+      this.resizeRect.getWidth(),
+      this.resizeRect.getHeight()
+    );
+
+    // LEFT,BOTTOM RECT
+    pjs.rect(this.resizeRect.getLeftX(this.x),
+      this.resizeRect.getBottomY(this.y, this.height),
+      this.resizeRect.getWidth(),
+      this.resizeRect.getHeight()
+    );
+
+    // RIGHT,TOP RECT
+    pjs.rect(this.resizeRect.getRightX(this.x, this.width),
+      this.resizeRect.getTopY(this.y),
+      this.resizeRect.getWidth(),
+      this.resizeRect.getHeight()
+    );
+
+    // RIGHT,BOTTOM RECT
+    pjs.rect(this.resizeRect.getRightX(this.x, this.width),
+      this.resizeRect.getBottomY(this.y, this.height),
+      this.resizeRect.getWidth(),
+      this.resizeRect.getHeight()
+    );
+  },
+
+  "drawRect": function () {
+    // console.log("Rect - drawRect")
     // //console.log("this.getLineColor(): ", this.getLineColor());
     // //console.log("this.lineColor: ", this.lineColor);
 
     var shapeColor
       , lineColor;
+
+    shapeColor = this.color.getColor();
+    lineColor = this.getLineColor().getColor();
     // //console.log("lineColor: ", lineColor);
+
+    pjs.fill(shapeColor.r, shapeColor.g, shapeColor.b);
+
+    if (this.isSelected()) {
+      // pjs.fill(0, 0, 0);
+    }
+
+    pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
+    // pjs.stroke(204, 102, 0);
+    pjs.rect(this.x, this.y, this.width, this.height);
+  },
+
+  "draw": function () {
+    // //console.log("Rect - draw");
     // console.log("this.isGroup(): ", this.isGroup());
-    if (this.isGroup()) {
-      // console.log("this.isGroup(): ", this.isGroup());
-      // console.log("x,y ("+this.x+","+this.y+")");
-      // console.log("width,height ("+this.width+","+this.height+")");
-      pjs.fill(153);
-      pjs.rect(this.x - 5, this.y - 5, 10, 10);
-      pjs.rect(this.x + this.width - 5, this.y - 5, 10, 10);
-
-      pjs.rect(this.x - 5, this.y + this.height - 5, 10, 10);
-      pjs.rect(this.x + this.width -  5, this.y + this.height - 5, 10, 10);
-    }
-    else {
-      shapeColor = this.color.getColor();
-      lineColor = this.getLineColor().getColor();
-      pjs.fill(shapeColor.r, shapeColor.g, shapeColor.b);
-
-      if (this.isSelected()) {
-        // pjs.fill(0, 0, 0);
-      }
-
-      pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
-      // pjs.stroke(204, 102, 0);
-      pjs.rect(this.x, this.y, this.width, this.height);
-    }
+    this.isGroup() ? this.drawResizeRects()
+      : this.drawRect();
 
   },
 
@@ -215,114 +245,161 @@ var Rect = Shape.extend({
        &&  mouseY >= this.y && mouseY <= this.y + this.height;
   },
 
-  "shouldResize": function (aCoords) {
-    //console.log("shouldResize");
-    //console.log("this x,y ("+this.x+","+this.y+")");
+
+  "findResizeCorner": function (lr, tb) {
+    bounds = {
+      "x" : 0,
+      "y" : 0,
+      "width" : 0,
+      "height" : 0,
+    }
+
+    if (lr === LEFT) {
+      bounds.x = this.x - this.resizeRect.getWidth();
+      bounds.width = this.x;
+    }
+    else if (lr === RIGHT) {
+      bounds.x = this.x + this.width;
+      bounds.width = this.x + this.width;
+    }
+
+    if (tb === TOP) {
+      bounds.y = this.y - this.resizeRect.getHeight()
+      bounds.height = this.y + this.resizeRect.getHeight();
+    }
+    else if (tb === BOTTOM) {
+      bounds.y = this.y + this.height
+      bounds.height = this.y + this.height + this.resizeRect.getHeight();
+    }
+
+    return bounds;
+
+  },
+
+  "shouldResize": function () {
+    console.log("shouldResize");
+    console.log("this x,y ("+this.x+","+this.y+")");
     //console.log("this width,height ("+this.width+","+this.height+")");
-    //console.log("aCoords: ", aCoords);
-    aCoords = {
-      "x": pjs.mouseX,
-      "y": pjs.mouseY,
-    };
-    // LEFT_UP
-    x = this.x - 5;
-    y = this.y - 5;
-    w = x + 10;
-    h = y + 10;
+    var i
+      , coords = {
+        "x": pjs.mouseX,
+        "y": pjs.mouseY,
+      };
+    console.log("coords: ", coords);
 
-    x1 = aCoords.x >= x;
-    x2 = aCoords.x <= w;
 
-    y1 = aCoords.y >= y;
-    y2 = aCoords.y <= h;
+    for (i = 0; i < CORNERS.length; i++) {
+      bounds = this.findResizeCorner(PLACES[CORNERS[i]]);
+      x1 = coords.x >= bounds.x;
+      x2 = coords.x <= bounds.width;
+      y1 = coords.y >= bounds.y;
+      y2 = coords.y <= bounds.height;
 
-    // //console.log("x,y ("+x+","+y+")");
-    // //console.log("w,h ("+w+","+h+")");
-
-    // //console.log("x 1,2 ("+x1+","+x2+")");
-    // //console.log("y 1,2 ("+ y1+","+y2+")");
-
-    if (x1 && x2 && y1 && y2) {
-      //console.log("found a match! LEFT_UP");
-      this.resizePoint = LEFT_UP;
-      return true;
+      if (x1 && x2 && y1 && y2) {
+        //console.log("found a match! LEFT_TOP");
+        this.resizePoint = CORNERS[i];
+        return true;
+      }
     }
+    // // LEFT_TOP
+    // x = this.x - 10;
+    // y = this.y - 10;
+    // w = this.x;
+    // h = y + 10;
+
+    // x1 = aCoords.x >= x;
+    // x2 = aCoords.x <= w;
+
+    // y1 = aCoords.y >= y;
+    // y2 = aCoords.y <= h;
+
+    // console.log("x,y ("+x+","+y+")");
+    // console.log("w,h ("+w+","+h+")");
+
+    // console.log("x 1,2 ("+x1+","+x2+")");
+    // console.log("y 1,2 ("+ y1+","+y2+")");
+
+    // if (x1 && x2 && y1 && y2) {
+    //   //console.log("found a match! LEFT_TOP");
+    //   this.resizePoint = LEFT_TOP;
+    //   return true;
+    // }
 
 
-    // LEFT_DOWN
-    x = this.x - 5;
-    y = this.y + this.height - 5;
-    w = x + 10;
-    h = y + 10;
+    // // LEFT_BOTTOM
+    // x = this.x - 10;
+    // y = this.y + this.height;
+    // w = this.x;
+    // h = y + 10;
 
-    x1 = aCoords.x >= x;
-    x2 = aCoords.x <= w;
+    // x1 = aCoords.x >= x;
+    // x2 = aCoords.x <= w;
 
-    y1 = aCoords.y >= y;
-    y2 = aCoords.y <= h;
+    // y1 = aCoords.y >= y;
+    // y2 = aCoords.y <= h;
 
-    // //console.log("x,y ("+x+","+y+")");
-    // //console.log("w,h ("+w+","+h+")");
+    // // //console.log("x,y ("+x+","+y+")");
+    // // //console.log("w,h ("+w+","+h+")");
 
-    // //console.log("x 1,2 ("+x1+","+x2+")");
-    // //console.log("y 1,2 ("+ y1+","+y2+")");
+    // // //console.log("x 1,2 ("+x1+","+x2+")");
+    // // //console.log("y 1,2 ("+ y1+","+y2+")");
 
-    if (x1 && x2 && y1 && y2) {
-      //console.log("found a match! LEFT_DOWN");
-      this.resizePoint = LEFT_DOWN;
-      return true;
-    }
-
-
-
-    // RIGHT_UP
-    x = this.x + this.width - 5;
-    y = this.y - 5;
-    w = x + 10;
-    h = y + 10;
-
-    x1 = aCoords.x >= x;
-    x2 = aCoords.x <= w;
-
-    y1 = aCoords.y >= y;
-    y2 = aCoords.y <= h;
-
-    // //console.log("x,y ("+x+","+y+")");
-    // //console.log("w,h ("+w+","+h+")");
-
-    // //console.log("x 1,2 ("+x1+","+x2+")");
-    // //console.log("y 1,2 ("+ y1+","+y2+")");
-
-    if (x1 && x2 && y1 && y2) {
-      //console.log("found a match! RIGHT_UP");
-      this.resizePoint = RIGHT_UP;
-      return true;
-    }
+    // if (x1 && x2 && y1 && y2) {
+    //   //console.log("found a match! LEFT_BOTTOM");
+    //   this.resizePoint = LEFT_BOTTOM;
+    //   return true;
+    // }
 
 
-    // RIGHT_DOWN
-    x = this.x + this.width - 5;
-    y = this.y + this.height - 5;
-    w = x + 10;
-    h = y + 10;
 
-    x1 = aCoords.x >= x;
-    x2 = aCoords.x <= w;
+    // // RIGHT_TOP
+    // x = this.x + this.width;
+    // y = this.y - 10;
+    // w = x + 10;
+    // h = y + 10;
 
-    y1 = aCoords.y >= y;
-    y2 = aCoords.y <= h;
+    // x1 = aCoords.x >= x;
+    // x2 = aCoords.x <= w;
 
-    // //console.log("x,y ("+x+","+y+")");
-    // //console.log("w,h ("+w+","+h+")");
+    // y1 = aCoords.y >= y;
+    // y2 = aCoords.y <= h;
 
-    // //console.log("x 1,2 ("+x1+","+x2+")");
-    // //console.log("y 1,2 ("+ y1+","+y2+")");
+    // // //console.log("x,y ("+x+","+y+")");
+    // // //console.log("w,h ("+w+","+h+")");
 
-    if (x1 && x2 && y1 && y2) {
-      //console.log("found a match! RIGHT_DOWN");
-      this.resizePoint = RIGHT_DOWN;
-      return true;
-    }
+    // // //console.log("x 1,2 ("+x1+","+x2+")");
+    // // //console.log("y 1,2 ("+ y1+","+y2+")");
+
+    // if (x1 && x2 && y1 && y2) {
+    //   //console.log("found a match! RIGHT_TOP");
+    //   this.resizePoint = RIGHT_TOP;
+    //   return true;
+    // }
+
+
+    // // RIGHT_BOTTOM
+    // x = this.x + this.width;
+    // y = this.y + this.height;
+    // w = x + 10;
+    // h = y + 10;
+
+    // x1 = aCoords.x >= x;
+    // x2 = aCoords.x <= w;
+
+    // y1 = aCoords.y >= y;
+    // y2 = aCoords.y <= h;
+
+    // // //console.log("x,y ("+x+","+y+")");
+    // // //console.log("w,h ("+w+","+h+")");
+
+    // // //console.log("x 1,2 ("+x1+","+x2+")");
+    // // //console.log("y 1,2 ("+ y1+","+y2+")");
+
+    // if (x1 && x2 && y1 && y2) {
+    //   //console.log("found a match! RIGHT_BOTTOM");
+    //   this.resizePoint = RIGHT_BOTTOM;
+    //   return true;
+    // }
 
     return false;
   },

@@ -334,11 +334,11 @@
       var i
         , end = _shapes.length;
 
-      _shapeGroup && _shapeGroup.draw();
-
       for (i = 0; i < end; i++) {
         _shapes[i].draw();
       }
+      _shapeGroup && _shapeGroup.draw();
+
       _overlayShape && _overlayShape.draw();
     };
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Stack</title>
+  <title>Drawing Tool</title>
 
   <style>
     body {
@@ -38,6 +38,7 @@
 </div>
 
 <script>
+
   const RECT = 1;
 
   const DEFAULT = 1
@@ -47,7 +48,87 @@
 
   const CTRL_KEY = 17;
 
+  const LEFT_TOP = 1
+  , LEFT_BOTTOM = 2
+  , RIGHT_TOP = 3
+  , RIGHT_BOTTOM = 4;
+
+  const LEFT = 1
+    , RIGHT = 2
+    , TOP = 3
+    , BOTTOM = 4;
+
+  const CORNERS = []
+  CORNERS[0] = LEFT_TOP;
+  CORNERS[1] = LEFT_BOTTOM;
+  CORNERS[2] = RIGHT_TOP;
+  CORNERS[3] = RIGHT_BOTTOM;
+
+  const PLACES = []
+  PLACES[LEFT_TOP] = {
+    "lr": LEFT,
+    "tb": TOP
+  }
+  PLACES[LEFT_BOTTOM] = {
+    "lr": LEFT,
+    "tb": BOTTOM
+  }
+
+  PLACES[RIGHT_TOP] = {
+    "lr": RIGHT,
+    "tb": TOP
+  }
+
+  PLACES[RIGHT_BOTTOM] = {
+    "lr": RIGHT,
+    "tb": BOTTOM
+  }
+
   window.Utils = {};
+
+
+ (function (Utils) {
+    Utils.ResizeRect = {};
+    var _resizeRect;
+    function ResizeRect () {
+      var _width = 10;
+      var _height = 10;
+
+      this.getLeftX = function (x) {
+        return x - _width;
+      };
+
+      this.getRightX = function (x, w) {
+        return x + w;
+      };
+
+      this.getTopY = function (y) {
+        return y - _height;
+      };
+
+      this.getBottomY = function (y, h) {
+        return y + h;
+      };
+
+      this.getWidth = function () {
+        return _width;
+      };
+
+      this.getHeight = function () {
+        return _height;
+      };
+    } // END RESIZE_RECT
+    Utils.ResizeRect.getInstance = function() {
+    if (!_resizeRect){
+      _resizeRect = new ResizeRect();
+    } //if
+    return _resizeRect;
+  } //getInstance
+
+  }(window.Utils));
+
+  
+
 
 </script>
 

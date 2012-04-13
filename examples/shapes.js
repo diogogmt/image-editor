@@ -1,8 +1,3 @@
-const LEFT_UP = 1
-  , LEFT_DOWN = 2
-  , RIGHT_UP = 3
-  , RIGHT_DOWN = 4;
-
 // Shape class
 var Shape = Base.extend({
   "x": 0,
@@ -14,6 +9,7 @@ var Shape = Base.extend({
   "lineColor": 0,
   "selected": true,
   "group": false,
+  "resizeRect": false,
 
   "constructor": function (opts) {
     //console.log("Shape - constructor");
@@ -26,6 +22,7 @@ var Shape = Base.extend({
     this.color = opts.color;
     this.selected = opts.selected;
     this.group = opts.group;
+    this.resizeRect = Utils.ResizeRect.getInstance();
   },
 
   // Setters

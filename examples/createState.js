@@ -29,7 +29,7 @@ var CreateState = Base.extend({
       "selected": false,
       "group": false,
     });
-    shape.setResizePoint(LEFT_UP);
+    shape.setResizePoint(LEFT_TOP);
     this.canvas.setOverlayShape(shape);
 
     //console.log("overlayShape: ", this.canvas.getOverlayShape());
