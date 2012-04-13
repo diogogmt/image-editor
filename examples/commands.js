@@ -24,7 +24,7 @@ DeleteShapeCommand = function (canvas)  {
 
   for (i = 0; i < end; i++) {
     shape = selectedShapes[i];
-    shapes.push(Utils.ShapeFactory.createShape(RECT, {
+    shapes.push(Utils.ShapeFactory.createShape(shape.getType(), {
       "x": shape.getX(),
       "y": shape.getY(),
       "width": shape.getWidth(),
@@ -35,7 +35,7 @@ DeleteShapeCommand = function (canvas)  {
       "lineColor": new Utils.Color(0,0,0),
       "selected": shape.getSelected(),
       "group": shape.getGroup(),
-      "overlay": shape.getOverlay(),
+      "overlay": Object.hasOwnProperty("getOverlay") && shape.getOverlay(),
     }));
   }
   return {
@@ -48,6 +48,7 @@ DeleteShapeCommand = function (canvas)  {
         console.log("i: ", i);
         canvas.removeShape(selectedShapes[i]);
         canvas.removeSelectedShape(selectedShapes[i]);
+        canvas.setOverlayShape(null);
       }
       canvas.updateShapeGroup();
       console.log("selectedShapes.length: ", selectedShapes.length);

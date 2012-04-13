@@ -10,6 +10,7 @@ var Shape = Base.extend({
   "selected": true,
   "group": false,
   "resizeRect": false,
+  "type": 0,
 
   "constructor": function (opts) {
     //console.log("Shape - constructor");
@@ -22,6 +23,7 @@ var Shape = Base.extend({
     this.color = opts.color;
     this.selected = opts.selected;
     this.group = opts.group;
+    this.type = opts.type;
     this.resizeRect = Utils.ResizeRect.getInstance();
   },
 
@@ -38,6 +40,12 @@ var Shape = Base.extend({
     //console.log("Shape - setColor");
     //console.log("aColor: ", aColor);
     this.color = aColor;
+  },
+
+  "setType": function (aType) {
+    //console.log("Shape - setColor");
+    //console.log("aColor: ", aColor);
+    this.type = aType;
   },
 
   "setZindex": function (aZindex) {
@@ -85,6 +93,10 @@ var Shape = Base.extend({
 
   "getColor": function () {
     return this.color;
+  },
+
+  "getType": function () {
+    return this.type;
   },
 
   "getZindex": function () {

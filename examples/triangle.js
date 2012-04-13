@@ -27,6 +27,7 @@ var Triangle = Shape.extend({
       "lineColor": opts.lineColor,
       "selected": opts.selected,
       "group": opts.group,
+      "type": opts.type,
     });
   },
 

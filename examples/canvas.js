@@ -107,15 +107,16 @@
         console.log("shape === element ? ", shape === element);
         if (shape === element) {
           console.log("removing shape");
+
           _shapes.splice(index, 1);
         }
       });
     };
 
     this.updateShapeGroup = function () {
-      //console.log("Canvas - updateShapeGroup");
-      //console.log("_shapeGroup: ", _shapeGroup);
-      //console.log("_selectedShapes: ", _selectedShapes);
+      console.log("Canvas - updateShapeGroup");
+      console.log("_shapeGroup: ", _shapeGroup);
+      console.log("_selectedShapes: ", _selectedShapes);
 
       var i
         , end = _selectedShapes.length
@@ -129,6 +130,7 @@
           };
 
       if (!end) {
+        console.log("** RETURNING");
         _shapeGroup = null;
         return;
       }
