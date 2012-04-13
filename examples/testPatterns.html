@@ -58,7 +58,7 @@
     , TOP = 3
     , BOTTOM = 4;
 
-  const CORNERS = []
+  const CORNERS = [];
   CORNERS[0] = LEFT_TOP;
   CORNERS[1] = LEFT_BOTTOM;
   CORNERS[2] = RIGHT_TOP;
@@ -91,23 +91,25 @@
     Utils.ResizeRect = {};
     var _resizeRect;
     function ResizeRect () {
-      var _width = 10;
-      var _height = 10;
+      var _width = 8;
+      var _height = 8;
+      var _offsetX = 4;
+      var _offsetY = 4;
 
       this.getLeftX = function (x) {
-        return x - _width;
+        return x - _width + _offsetX;
       };
 
       this.getRightX = function (x, w) {
-        return x + w;
+        return x + w - _offsetX;
       };
 
       this.getTopY = function (y) {
-        return y - _height;
+        return y - _height + _offsetY;
       };
 
       this.getBottomY = function (y, h) {
-        return y + h;
+        return y + h - _offsetY;
       };
 
       this.getWidth = function () {
@@ -116,6 +118,14 @@
 
       this.getHeight = function () {
         return _height;
+      };
+
+      this.getOffsetX = function () {
+        return _offsetX;
+      };
+
+      this.getOffsetY = function () {
+        return _offsetY;
       };
     } // END RESIZE_RECT
     Utils.ResizeRect.getInstance = function() {

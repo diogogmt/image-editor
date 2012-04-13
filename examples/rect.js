@@ -174,8 +174,8 @@ var Rect = Shape.extend({
     // console.log("this.isGroup(): ", this.isGroup());
     // console.log("x,y ("+this.x+","+this.y+")");
     // console.log("width,height ("+this.width+","+this.height+")");
-    pjs.noStroke();
-    pjs.fill(153);
+    pjs.stroke(0);
+    pjs.fill(255);
     // LEFT,TOP RECT
     pjs.rect(this.resizeRect.getLeftX(this.x),
       this.resizeRect.getTopY(this.y),
@@ -246,30 +246,32 @@ var Rect = Shape.extend({
   },
 
 
-  "findResizeCorner": function (lr, tb) {
-    bounds = {
+  "findResizeCorner": function (pos) {
+    console.log("Rect - findResizeCorner");
+    console.log("pos: ", pos.lr + ", " + pos.tb);
+    var bounds = {
       "x" : 0,
       "y" : 0,
       "width" : 0,
       "height" : 0,
+    };
+
+    if (pos.lr === LEFT) {
+      bounds.x = this.resizeRect.getLeftX(this.x);
+      bounds.width = this.resizeRect.getLeftX(this.x) + this.resizeRect.getWidth();
+    }
+    else if (pos.lr === RIGHT) {
+      bounds.x = this.resizeRect.getRightX(this.x, this.width);
+      bounds.width = this.resizeRect.getRightX(this.x, this.width) + this.resizeRect.getWidth();
     }
 
-    if (lr === LEFT) {
-      bounds.x = this.x - this.resizeRect.getWidth();
-      bounds.width = this.x;
+    if (pos.tb === TOP) {
+      bounds.y = this.resizeRect.getTopY(this.y);
+      bounds.height = this.resizeRect.getTopY(this.y) + this.resizeRect.getHeight();
     }
-    else if (lr === RIGHT) {
-      bounds.x = this.x + this.width;
-      bounds.width = this.x + this.width;
-    }
-
-    if (tb === TOP) {
-      bounds.y = this.y - this.resizeRect.getHeight()
-      bounds.height = this.y + this.resizeRect.getHeight();
-    }
-    else if (tb === BOTTOM) {
-      bounds.y = this.y + this.height
-      bounds.height = this.y + this.height + this.resizeRect.getHeight();
+    else if (pos.tb === BOTTOM) {
+      bounds.y = this.resizeRect.getBottomY(this.y, this.height);
+      bounds.height = this.resizeRect.getBottomY(this.y, this.height) + this.resizeRect.getHeight();
     }
 
     return bounds;
@@ -281,125 +283,32 @@ var Rect = Shape.extend({
     console.log("this x,y ("+this.x+","+this.y+")");
     //console.log("this width,height ("+this.width+","+this.height+")");
     var i
+      , x
+      , y
+      , width
+      , height
       , coords = {
         "x": pjs.mouseX,
         "y": pjs.mouseY,
       };
     console.log("coords: ", coords);
 
-
+    console.log("CORNERS.length: ", CORNERS.length);
     for (i = 0; i < CORNERS.length; i++) {
       bounds = this.findResizeCorner(PLACES[CORNERS[i]]);
-      x1 = coords.x >= bounds.x;
-      x2 = coords.x <= bounds.width;
-      y1 = coords.y >= bounds.y;
-      y2 = coords.y <= bounds.height;
+      x = coords.x >= bounds.x;
+      y = coords.y >= bounds.y;
+      width = coords.x <= bounds.width;
+      height = coords.y <= bounds.height;
+      console.log("x,y ("+x+","+y+")");
+      console.log("width,height ("+ width+","+height+")");
 
-      if (x1 && x2 && y1 && y2) {
+      if (x && y && width && height) {
         //console.log("found a match! LEFT_TOP");
         this.resizePoint = CORNERS[i];
         return true;
       }
     }
-    // // LEFT_TOP
-    // x = this.x - 10;
-    // y = this.y - 10;
-    // w = this.x;
-    // h = y + 10;
-
-    // x1 = aCoords.x >= x;
-    // x2 = aCoords.x <= w;
-
-    // y1 = aCoords.y >= y;
-    // y2 = aCoords.y <= h;
-
-    // console.log("x,y ("+x+","+y+")");
-    // console.log("w,h ("+w+","+h+")");
-
-    // console.log("x 1,2 ("+x1+","+x2+")");
-    // console.log("y 1,2 ("+ y1+","+y2+")");
-
-    // if (x1 && x2 && y1 && y2) {
-    //   //console.log("found a match! LEFT_TOP");
-    //   this.resizePoint = LEFT_TOP;
-    //   return true;
-    // }
-
-
-    // // LEFT_BOTTOM
-    // x = this.x - 10;
-    // y = this.y + this.height;
-    // w = this.x;
-    // h = y + 10;
-
-    // x1 = aCoords.x >= x;
-    // x2 = aCoords.x <= w;
-
-    // y1 = aCoords.y >= y;
-    // y2 = aCoords.y <= h;
-
-    // // //console.log("x,y ("+x+","+y+")");
-    // // //console.log("w,h ("+w+","+h+")");
-
-    // // //console.log("x 1,2 ("+x1+","+x2+")");
-    // // //console.log("y 1,2 ("+ y1+","+y2+")");
-
-    // if (x1 && x2 && y1 && y2) {
-    //   //console.log("found a match! LEFT_BOTTOM");
-    //   this.resizePoint = LEFT_BOTTOM;
-    //   return true;
-    // }
-
-
-
-    // // RIGHT_TOP
-    // x = this.x + this.width;
-    // y = this.y - 10;
-    // w = x + 10;
-    // h = y + 10;
-
-    // x1 = aCoords.x >= x;
-    // x2 = aCoords.x <= w;
-
-    // y1 = aCoords.y >= y;
-    // y2 = aCoords.y <= h;
-
-    // // //console.log("x,y ("+x+","+y+")");
-    // // //console.log("w,h ("+w+","+h+")");
-
-    // // //console.log("x 1,2 ("+x1+","+x2+")");
-    // // //console.log("y 1,2 ("+ y1+","+y2+")");
-
-    // if (x1 && x2 && y1 && y2) {
-    //   //console.log("found a match! RIGHT_TOP");
-    //   this.resizePoint = RIGHT_TOP;
-    //   return true;
-    // }
-
-
-    // // RIGHT_BOTTOM
-    // x = this.x + this.width;
-    // y = this.y + this.height;
-    // w = x + 10;
-    // h = y + 10;
-
-    // x1 = aCoords.x >= x;
-    // x2 = aCoords.x <= w;
-
-    // y1 = aCoords.y >= y;
-    // y2 = aCoords.y <= h;
-
-    // // //console.log("x,y ("+x+","+y+")");
-    // // //console.log("w,h ("+w+","+h+")");
-
-    // // //console.log("x 1,2 ("+x1+","+x2+")");
-    // // //console.log("y 1,2 ("+ y1+","+y2+")");
-
-    // if (x1 && x2 && y1 && y2) {
-    //   //console.log("found a match! RIGHT_BOTTOM");
-    //   this.resizePoint = RIGHT_BOTTOM;
-    //   return true;
-    // }
 
     return false;
   },
