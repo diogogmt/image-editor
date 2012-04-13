@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Stack</title>
+  <title>Drawing Tool</title>
   <link rel="stylesheet" type="text/css" href="style.css"/>
   <link rel="stylesheet" media="screen" type="text/css" href="../libs/Belelros-jQuery-ColorPicker-2d3230d/css/colorpicker.css" />
   <link type="text/css" href="../libs/jquery-ui-1.8.18.custom/css/ui-lightness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
@@ -56,12 +56,124 @@
     <div id="lineWeightSlider"></div>
     <div id="lineWeightPreview"></div>
     <br />
+    <br />
+    <button id="do">Do</button>
+    <button id="undo">Undo</button>
+    <button id="rect">Rect</button>
+    <button id="color">Change Color</button>
+    <br />
+    <br />
     <canvas id="glibcanvas"></canvas>
 
 </div>
 
+<script>
+
+  const RECT = 1;
+
+  const DEFAULT = 1
+  , MOVE = 2
+  , CREATE = 3
+  , RESIZE = 4;
+
+  const CTRL_KEY = 17;
+
+  const LEFT_TOP = 1
+  , LEFT_BOTTOM = 2
+  , RIGHT_TOP = 3
+  , RIGHT_BOTTOM = 4;
+
+  const LEFT = 1
+    , RIGHT = 2
+    , TOP = 3
+    , BOTTOM = 4;
+
+  const CORNERS = []
+  CORNERS[0] = LEFT_TOP;
+  CORNERS[1] = LEFT_BOTTOM;
+  CORNERS[2] = RIGHT_TOP;
+  CORNERS[3] = RIGHT_BOTTOM;
+
+  const PLACES = []
+  PLACES[LEFT_TOP] = {
+    "lr": LEFT,
+    "tb": TOP
+  }
+  PLACES[LEFT_BOTTOM] = {
+    "lr": LEFT,
+    "tb": BOTTOM
+  }
+
+  PLACES[RIGHT_TOP] = {
+    "lr": RIGHT,
+    "tb": TOP
+  }
+
+  PLACES[RIGHT_BOTTOM] = {
+    "lr": RIGHT,
+    "tb": BOTTOM
+  }
+
+  window.Utils = {};
+
+
+ (function (Utils) {
+    Utils.ResizeRect = {};
+    var _resizeRect;
+    function ResizeRect () {
+      var _width = 10;
+      var _height = 10;
+
+      this.getLeftX = function (x) {
+        return x - _width;
+      };
+
+      this.getRightX = function (x, w) {
+        return x + w;
+      };
+
+      this.getTopY = function (y) {
+        return y - _height;
+      };
+
+      this.getBottomY = function (y, h) {
+        return y + h;
+      };
+
+      this.getWidth = function () {
+        return _width;
+      };
+
+      this.getHeight = function () {
+        return _height;
+      };
+    } // END RESIZE_RECT
+    Utils.ResizeRect.getInstance = function() {
+    if (!_resizeRect){
+      _resizeRect = new ResizeRect();
+    } //if
+    return _resizeRect;
+  } //getInstance
+
+  }(window.Utils));
+
+  
+
+
+</script>
+
+<script src="commands.js"></script>
+<script src="color.js"></script>
+<script src="shapeFactory.js"></script>
 <script src="shapes.js"></script>
+<script src="rect.js"></script>
+<script src="defaultState.js"></script>
+<script src="createState.js"></script>
+<script src="resizeState.js"></script>
+<script src="moveState.js"></script>
+<script src="undoManager.js"></script>
 <script src="canvas.js"></script>
+<script src="controller.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -73,13 +185,34 @@
       pjs.noLoop();
     });
 
+    $("#do").click(function (e) {
+      console.log("redo click");
+      Utils.UndoManager.getInstance().redo();
+    });
+
+    $("#undo").click(function (e) {
+      console.log("undo click");
+      Utils.UndoManager.getInstance().undo();
+    });
+
+    $("#rect").click(function (e) {
+      console.log("rect click listener");
+      controller.perform("setCanvasState", [CREATE,RECT]);
+    });
+
+    $("#color").click(function (e) {
+      console.log("color click");
+      controller.perform("setColor", [Utils.generateColor()]);
+    });
+
     var c = document.getElementById('glibcanvas');
     pjs = new Processing(c);
 
-    canvas = new Canvas();
+    var canvas = Utils.Canvas.getInstance();
+    var controller = Utils.Controller.getInstance();
     pjs.setup = function() {
-      pjs.size(500, 500);
-      pjs.frameRate(64);
+      pjs.size(800, 800);
+      pjs.frameRate(200);
       pjs.stroke("#003300");
       pjs.fill("#0000FF");
       var fontA = pjs.loadFont("Arial");
@@ -88,7 +221,7 @@
 
     pjs.draw = function() {
       // console.log("pjs draw");
-      pjs.background(33, 66, 99);
+      pjs.background(255, 255, 255);
       canvas.draw();
     };
 
@@ -108,12 +241,14 @@
       // console.log("mouse x,y ("+pjs.mouseX+","+pjs.mouseY+")");
     },
 
+    pjs.keyReleased = function () {
+      console.log("pjs - keyReleased");
+      pjs.keyCode = null;
+
+      console.log("keyCode: ", pjs.keyCode);
+    },
+
     pjs.setup();
-
-    var r = new Rect({x: 50, y: 50, width: 100, height: 100, lineStyle: 1,
-      lineWeight: 1, color: new Color(255, 255, 255)});
-
-    canvas.shapes.push(r);
 
     // Color Picker
     var widt = false;

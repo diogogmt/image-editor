@@ -1,59 +1,67 @@
+body {
+  margin: 0;
+  padding: 0;
+  /*background-color: #e5e5e5;*/
+}
+
 #glibcanvas {
-	margin-top: 5px;
+  margin-top: 5px;
+  width: 800px;
+  height: 800px;
 }
 #customWidget {
-	position: relative;
-	height: 36px;
-	bottom: 33px;
-	display: inline;
+  position: relative;
+  height: 36px;
+  bottom: 33px;
+  display: inline;
 }
 #colorpickerholder2 {
-	top: 32px;
-	left: 0;
-	width: 356px;
-	height: 0;
-	overflow: hidden;
-	position: absolute;
+  top: 32px;
+  left: 0;
+  width: 356px;
+  height: 0;
+  overflow: hidden;
+  position: absolute;
 }
 #colorpickerholder2 .colorpicker input {
-	color: #778398;
+  color: #778398;
 }
 #colorselector {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 36px;
-	height: 35px;
-	background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 35px;
+  background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png);
 }
 #colorselector div {
-	position: absolute;
-	top: 4px;
-	left: 4px;
-	width: 28px;
-	height: 28px;
-	background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png) center;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 28px;
+  height: 28px;
+  background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png) center;
 }
 #lineWeightSlider {
-	display: inline;
-	position: absolute;
-	width: 100px;
-	height: 5px;
-	margin-left: 50px;
-	margin-top: 11px;
+  display: inline;
+  position: absolute;
+  width: 100px;
+  height: 5px;
+  margin-left: 50px;
+  margin-top: 11px;
 }
 #lineWeightSlider .ui-slider-handle {
-	height: 12px;
-	width: 12px;
+  height: 12px;
+  width: 12px;
 }
 #lineWeightPreview {
-	display: inline;
-	position: absolute;
-	width: 50px;
-	height: 1px;
-	background-color: #000000;
-	margin-left: 170px;
-	margin-top: 11px;
+  display: inline;
+  position: absolute;
+  width: 50px;
+  height: 1px;
+  background-color: #000000;
+  margin-left: 170px;
+  margin-top: 11px;
 }
 
 
@@ -67,18 +75,18 @@
 
 /*
 #colorselector {
-	display: inline;
-	position: relative;
-	width: 36px;
-	height: 36px;
-	background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png);
+  display: inline;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png);
 }
 #colorselector div {
-	position: absolute;
-	top: 5px;
-	left: 5px;
-	width: 28px;
-	height: 27px;
-	background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png) center;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 28px;
+  height: 27px;
+  background: url(../libs/Belelros-jQuery-ColorPicker-2d3230d/images/select2.png) center;
 }
 */
