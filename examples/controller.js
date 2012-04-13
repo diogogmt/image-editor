@@ -42,6 +42,7 @@
         //console.log("Controller - resizeShape");
         //console.log("shape: ", shape);
         //console.log("shape: ", options);
+        options.canvas = _canvas;
         var command = new ResizeShapeCommand(shape, options);
         command.execute();
         _undoManager.register(command);

@@ -14,7 +14,7 @@ var MoveState = Base.extend({
 
 
   "start": function (shape) {
-    console.log("MoveState - start");
+    //console.log("MoveState - start");
     this.moved = false;
     
 
@@ -27,11 +27,11 @@ var MoveState = Base.extend({
     this.lastX = coords.x;
     this.lastY = coords.y;
 
-    console.log("dx, dy (" + dx + "," + dy + ")\n");
+    //console.log("dx, dy (" + dx + "," + dy + ")\n");
   },
 
   "during": function () {
-    //console.log("MoveState - during");
+    console.log("MoveState - during");
     var i
       , dimension
       , shape
@@ -41,64 +41,58 @@ var MoveState = Base.extend({
 
     this.moved = true;
 
+    shapeGroup = this.canvas.getShapeGroup();
+
+    tempW = pjs.mouseX + dx;
+    tempY = pjs.mouseY + dy;
+
+    x = Math.abs(shapeGroup.getWidth() - tempW);
+    y = Math.abs(shapeGroup.getHeight() - tempY);
+
+    dx = (x + shapeGroup.getWidth()) - pjs.mouseX;
+    dy = (y + shapeGroup.getHeight()) - pjs.mouseY;
+
+    shapeGroup.setCoords({
+      "x": x,
+      "y": y,
+    });
+
+    console.log("shapeGroup.getX(): ", shapeGroup.getX());
+    console.log("shapeGroup.getY(): ", shapeGroup.getY());
+    console.log("this.lastX: ", this.lastX);
+    console.log("this.lastY: ", this.lastY);
+
+    var diff = {
+      "x": shapeGroup.getX() - this.lastX,
+      "y": shapeGroup.getY() - this.lastY
+    };
+    console.log("diff x,y ("+diff.x+","+diff.y+")");
+
     for (i = 0; i < end; i++) {
       shape = shapes[i];
-      dimension = shape.getDimensions();
-      coords = shape.getCoords();
-      shapeGroup = this.canvas.getShapeGroup();
-
-      console.log("\n**coords x,y (" + coords.x + "," +
-        coords.y + ")");
-      console.log("dim w,h (" + dimension.width + "," +
-        dimension.height + ")");
-      console.log("pjs x,y (" + pjs.mouseX + "," +
-        pjs.mouseY + ")");
-      console.log("pjs w,h (" + pjs.width + "," +
-        pjs.height + ")");
-
-      tempW = pjs.mouseX + dx;
-      tempY = pjs.mouseY + dy;
-
-      x = Math.abs(dimension.width - tempW);
-      y = Math.abs(dimension.height - tempY);
-
-      dx = (x + dimension.width) - pjs.mouseX;
-      dy = (y + dimension.height) - pjs.mouseY;
-      console.log("tempW, tempH (" + tempW + "," +
-        tempY + ")");
-      console.log("dx, dy (" + dx + "," + dy + ")\n");
-      console.log("x, y (" + x + "," + y + ")");
-
-      sx = coords.x;
-      sy = coords.y;
-
-      sx += Math.abs(shapeGroup.getX() - this.lastX);
-      sy += Math.abs(shapeGroup.getY() - this.lastY);
-      console.log("sx, sy (" + sx + "," + sy + ")");
-
+      shapeCoords = shape.getCoords();
+      var newCoords = {
+        "x": shapeCoords.x + diff.x,
+        "y": shapeCoords.y + diff.y
+      };
       shape.setCoords({
-        "x": x,
-        "y": y,
-      });
-      shapeGroup.setCoords({
-        "x": x,
-        "y": y,
+        "x": newCoords.x,
+        "y": newCoords.y,
       });
     }
-
     // Not using. Maybe delete?
     this.lastX = shapeGroup.getX();
     this.lastY = shapeGroup.getY();
   },
 
   "end": function () {
-    console.log("MoveState - end");
-    console.log("moved: ", this.moved);
+    //console.log("MoveState - end");
+    //console.log("moved: ", this.moved);
     // var shape;
     // if (!this.moved) {
-    //   console.log("!this.moved");
+    //   //console.log("!this.moved");
     //   shape = this.canvas.getShapeBehindGroup();
-    //   console.log("shape: ", shape);
+    //   //console.log("shape: ", shape);
     //   if (shape) {
     //     this.canvas.deselectShapes();
     //     shape.setSelected(true);

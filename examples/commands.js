@@ -4,10 +4,13 @@ CreateShapeCommand = function (canvas, shape)  {
     "execute": function () {
       //console.log("createShapeCommand - execute");
       canvas.addShape(shape);
+      canvas.updateShapeGroup();
     },
     "undo": function () {
-      //console.log("createShapeCommand - undo");
+      console.log("createShapeCommand - undo");
+      canvas.removeSelectedShape(shape);
       canvas.removeShape(shape);
+      canvas.updateShapeGroup();
     }
   }
 }
@@ -18,10 +21,12 @@ DeleteShapeCommand = function (canvas, shape)  {
   return {
     "execute": function () {
       canvas.removeShape(shape);
-
+      canvas.
+      canvas.updateShapeGroup();
     },
     "undo": function () {
       canvas.insertShape(shape);
+      canvas.updateShapeGroup();
     }
   }
 }
@@ -100,25 +105,29 @@ ResizeShapeCommand = function (shape, options)  {
   //console.log("ResizeShapeCommand");
   //console.log("shape: ", shape);
   //console.log("options: ", options);
-  var dimensions = shape.getDimensions();
-  var coords = shape.getCoords();
+  var oldDimensions = shape.getDimensions();
+  var oldCoords = shape.getCoords();
 
   return {
     "execute": function () {
-      //console.log("ResizeShapeCommand");
+      console.log("ResizeShapeCommand - execute");
       //console.log("execute");
       //console.log("dimensions: ", dimensions);
       //console.log("coords: ", coords);
-      shape.setDimensions(dimensions)
-        .setCoords(coords);
+      shape.setDimensions(options.newDimensions)
+        .setCoords(options.newCoords);
+      options.canvas.updateShapeGroup();
+
     },
 
     "undo": function () {
       //console.log("ResizeShapeCommand");
       //console.log("undo");
       //console.log("options: ", options);
-      shape.setDimensions(options.oldDimensions)
-        .setCoords(options.oldCoords);
+      shape.setDimensions(oldDimensions)
+        .setCoords(oldCoords);
+      options.canvas.updateShapeGroup();
+
     }
   }
 }

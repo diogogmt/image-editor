@@ -3,6 +3,7 @@ var ResizeState = Base.extend({
   "canvas": null,
   "selectedShape": null,
   "beforeResize": null,
+  "overlayShape": null,
 
   "constructor": function (canvas) {
     this.canvas = canvas
@@ -11,39 +12,49 @@ var ResizeState = Base.extend({
   // Resize
   "start": function () {
     //console.log("ResizeState start")
-    var i
-      , shapes = this.canvas.getShapes()
-      , end = shapes.length
-      , shape;
-    for (i = 0; i < end; i++) {
-      if (shapes[i].isSelected()) {
-        this.selectedShape = shapes[i];
-        break;
-      }
-    }
-    shape = this.selectedShape;
-    ss = shape;
-    this.beforeResize = {
-      "oldCoords": shape.getCoords(),
-      "oldDimensions": shape.getDimensions(),
-    };
-    //console.log("shape: ", shape);
+
+    var shapeGroup = this.canvas.getShapeGroup();
+    this.overlayShape = Utils.ShapeFactory.createShape(RECT, {
+      "x": shapeGroup.getX(),
+      "y": shapeGroup.getY(),
+      "width": shapeGroup.getWidth(),
+      "height": shapeGroup.getHeight(),
+      "color": new Utils.Color(0,0,0),
+      "lineWeight": null,
+      "lineStyle": null,
+      "lineColor": new Utils.Color(0,0,0),
+      "selected": false,
+      "group": false,
+      "overlay": true,
+    });
+    var corner = this.overlayShape.shouldResize();
+    console.log("corner: ", corner);
+    this.overlayShape.setResizePoint(corner);
+    this.canvas.setOverlayShape(this.overlayShape);
+    // console.log("overlayShape: ", this.overlayShape);
     //console.log("beforeResize: ", this.beforeResize);
-    shape.setMaxCoords();
-    shape.setMinCoords();
+    this.overlayShape.setMaxCoords();
+    this.overlayShape.setMinCoords();
   },
 
   "during": function () {
-    this.selectedShape.resize();
-
+    this.overlayShape.resize();
   },
 
   "end": function () {
-    //console.log("ResizeState - end");
-    //console.log("this.selectedShape: ", this.selectedShape);
-    //console.log("beforeResize: ", this.beforeResize);
-    this.canvas.resizeShape(this.selectedShape, this.beforeResize)
-    this.canvas.setCurrentState(DEFAULT);
+    console.log("ResizeState - end");
+
+    var oldShape = this.canvas.getSelectedShapes()[0];
+    console.log("oldShape: ", oldShape);
+    var afterResize = {
+      "newCoords": this.overlayShape.getCoords(),
+      "newDimensions": this.overlayShape.getDimensions()
+    };
+
+    this.canvas.setOverlayShape(null);
+    this.canvas.resizeShape(oldShape, afterResize)
+    console.log("this.overlayShape: ", this.overlayShape);
+    // this.canvas.setCurrentState(DEFAULT);
   },
 
 });

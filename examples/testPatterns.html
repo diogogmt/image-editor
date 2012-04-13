@@ -6,7 +6,9 @@
   <link type="text/css" href="../libs/jquery-ui-1.8.18.custom/css/ui-lightness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
   <link type="text/css" href="../libs/menu/menu_style.css" rel="Stylesheet" />
   <style>
-
+    body {
+      -webkit-user-select: none;
+    }
   </style>
 </head>
 <body>
@@ -241,6 +243,10 @@
 
     pjs.mouseDragged = function () {
       canvas.mouseDragged();
+      if (canvas.getCurrentState() === MOVE) {
+        $(document.body).css("cursor", "move");
+        return;
+      }
     },
 
     pjs.mouseReleased = function () {
@@ -248,7 +254,19 @@
     },
 
     pjs.mouseMoved = function () {
-      // console.log("mouse x,y ("+pjs.mouseX+","+pjs.mouseY+")");
+      var i
+        , shapes = canvas.getShapes()
+        , end = shapes.length
+        , shape
+
+      for (i = 0; i < end; i++) {
+        shape = shapes[i];
+        if (shape.isMouseOver()) {
+          $(document.body).css("cursor", "move");
+          return;
+        }
+      }
+      $(document.body).css("cursor", "auto");
     },
 
     pjs.keyReleased = function () {
