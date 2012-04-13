@@ -1,4 +1,3 @@
-
 (function (Utils)  {
 
   Utils.Canvas = {};
@@ -487,13 +486,3 @@
   } //getInstance
 
 }(window.Utils));
-
-
-
-
-
-
-
-
-
-

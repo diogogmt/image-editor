@@ -1,38 +1,68 @@
-<!DOCTYPE html>
 <html>
 <head>
   <title>Drawing Tool</title>
-
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <link rel="stylesheet" media="screen" type="text/css" href="../libs/Belelros-jQuery-ColorPicker-2d3230d/css/colorpicker.css" />
+  <link type="text/css" href="../libs/jquery-ui-1.8.18.custom/css/ui-lightness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+  <link type="text/css" href="../libs/menu/menu_style.css" rel="Stylesheet" />
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #e5e5e5;
-    }
-    #glibcanvas {
-      width: 800px;
-      height: 800px;
-    }
+
   </style>
 </head>
 <body>
-<script src="../libs/jquery.min.js"></script>
-<script src="../libs/processing-1.3.6.js"></script>
-<script src="../libs/Base.js"></script>
+<script type="text/javascript" src="../libs/jquery.min.js"></script>
+<script type="text/javascript" src="../libs/jquery-ui-1.8.18.custom/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script type="text/javascript" src="../libs/processing-1.3.6.js"></script>
+<script type="text/javascript" src="../libs/Base.js"></script>
+<script type="text/javascript" src="../libs/Belelros-jQuery-ColorPicker-2d3230d/colorpicker.js"></script>
 
 <div id="wrapper">
 
     <button id="start">Start</button>
     <button id="stop">Stop</button>
+    <br />
+    <br />
+
+    <div class="menu">
+    <ul>
+    <li><a href="" target="_self" >File</a>
+    <ul>
+    <li><a href="" target="_self">New</a></li>
+    <li><a href="" target="_self">Open</a></li>
+    <li><a href="" target="_self">Save</a></li>
+    <li><a href="" target="_self">Group</a></li>
+    <li><a href="" target="_self">Ungroup</a></li>
+    <li><a href="" target="_self">Select All</a></li>
+    </ul>
+    </li>
+    <li><a href="" target="_self" >Edit</a>
+    <ul>
+    <li><a href="" target="_self">Undo</a></li>
+    <li><a href="" target="_self">Redo</a></li>
+    <li><a href="" target="_self">Copy</a></li>
+    <li><a href="" target="_self">Paste</a></li>
+    <li><a href="" target="_self">Delete</a></li>
+    </ul>
+    </li>
+    </ul>
+    </div>
+
+    <br />
+    <img src="../images/pointerbutton.png" alt="pointer" id="pointer"/><img src="../images/rectanglebutton.png" alt="rectangle" id="rectangle"/><img src="../images/trianglebutton.png" alt="triangle" id="triangle"/><img src="../images/circlebutton.png" alt="circle" id="circle"/><img src="../images/linebutton.png" alt="line" id="line"/>
+    <div id="customWidget">
+        <div id="colorselector"><div style="background-color: #EFEFEF"></div></div>
+        <div id="colorpickerholder2"></div>
+    </div>
+    <div id="lineWeightSlider"></div>
+    <div id="lineWeightPreview"></div>
+    <br />
+    <br />
     <button id="do">Do</button>
     <button id="undo">Undo</button>
     <button id="rect">Rect</button>
     <button id="color">Change Color</button>
-
     <br />
     <br />
-
-
     <canvas id="glibcanvas"></canvas>
 
 </div>
@@ -218,7 +248,7 @@
     },
 
     pjs.mouseMoved = function () {
-
+      // console.log("mouse x,y ("+pjs.mouseX+","+pjs.mouseY+")");
     },
 
     pjs.keyReleased = function () {
@@ -227,10 +257,58 @@
 
       console.log("keyCode: ", pjs.keyCode);
     },
+
     pjs.setup();
 
+    // Color Picker
+    var widt = false;
+    $('#colorpickerholder2').ColorPicker({
+        flat: true,
+        color: '#EFEFEF',
+        onChange: function(hsb, hex, rgb) {
+            $('#colorselector div').css('backgroundColor', '#' + hex);
+        }
+    });
+    $('#colorselector').bind('click', function() {
+        $('#colorpickerholder2').stop().animate({height: widt ? 0 : 173}, 500);
+        widt = !widt;
+    });
+    // Line Weight Slider
+    $('#lineWeightSlider').slider({
+      value: 1,
+      min: 1,
+      max: 10,
+      slide: function (event, ui) {
+        $('#lineWeightPreview').css('height', ui.value);
+      }
+    });
 
-
+    // $("#colorselector").ColorPicker({  
+    //     color: '#EFEFEF',
+    //     onShow: function (colpkr) {  
+    //         $(colpkr).fadeIn(500);  
+    //         return false;  
+    //     },  
+    //     onHide: function (colpkr) {  
+    //         $(colpkr).fadeOut(500);  
+    //         return false;  
+    //     },  
+    //     onChange: function (hsb, hex, rgb) {  
+    //         $('#colorselector div').css('backgroundColor', '#' + hex);  
+    //     }  
+    // });
+  });
+  // Action buttons
+  $("img").on("click", function(event){
+    var old = $('img[pressed="true"]');
+    old.removeAttr("pressed");
+    old.attr("src", function(){
+      return "../images/" + old.attr("alt") + "button.png";
+    });
+    $(this).attr("pressed", "true");
+    $(this).attr("src", function(){
+      return "../images/" + this.alt + "buttonselected.png";
+    });
   });
 </script>
 
