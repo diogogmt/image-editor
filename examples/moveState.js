@@ -14,7 +14,7 @@ var MoveState = Base.extend({
 
 
   "start": function (shape) {
-    //console.log("MoveState - start");
+    ////console.log("MoveState - start");
     this.moved = false;
     
 
@@ -27,11 +27,11 @@ var MoveState = Base.extend({
     this.lastX = coords.x;
     this.lastY = coords.y;
 
-    //console.log("dx, dy (" + dx + "," + dy + ")\n");
+    ////console.log("dx, dy (" + dx + "," + dy + ")\n");
   },
 
   "during": function () {
-    console.log("MoveState - during");
+    //console.log("MoveState - during");
     var i
       , dimension
       , shape
@@ -57,16 +57,16 @@ var MoveState = Base.extend({
       "y": y,
     });
 
-    console.log("shapeGroup.getX(): ", shapeGroup.getX());
-    console.log("shapeGroup.getY(): ", shapeGroup.getY());
-    console.log("this.lastX: ", this.lastX);
-    console.log("this.lastY: ", this.lastY);
+    ////console.log("shapeGroup.getX(): ", shapeGroup.getX());
+    ////console.log("shapeGroup.getY(): ", shapeGroup.getY());
+    ////console.log("this.lastX: ", this.lastX);
+    ////console.log("this.lastY: ", this.lastY);
 
     var diff = {
       "x": shapeGroup.getX() - this.lastX,
       "y": shapeGroup.getY() - this.lastY
     };
-    console.log("diff x,y ("+diff.x+","+diff.y+")");
+    //console.log("diff x,y ("+diff.x+","+diff.y+")");
 
     for (i = 0; i < end; i++) {
       shape = shapes[i];
@@ -86,13 +86,13 @@ var MoveState = Base.extend({
   },
 
   "end": function () {
-    //console.log("MoveState - end");
-    //console.log("moved: ", this.moved);
+    ////console.log("MoveState - end");
+    ////console.log("moved: ", this.moved);
     // var shape;
     // if (!this.moved) {
-    //   //console.log("!this.moved");
+    //   ////console.log("!this.moved");
     //   shape = this.canvas.getShapeBehindGroup();
-    //   //console.log("shape: ", shape);
+    //   ////console.log("shape: ", shape);
     //   if (shape) {
     //     this.canvas.deselectShapes();
     //     shape.setSelected(true);

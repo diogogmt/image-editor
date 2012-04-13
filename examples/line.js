@@ -1,5 +1,5 @@
 // Circle class
-var Circle = Shape.extend({
+var Line = Shape.extend({
 
   "width": 0,
   "height": 0,
@@ -171,10 +171,18 @@ var Circle = Shape.extend({
 
     pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
     pjs.strokeWeight(lineWeight);
-    pjs.ellipse(this.x + (this.width / 2),
-      this.y + (this.height / 2),
-      this.width,
-      this.height
+    var p1 = {
+      "x": this.x,
+      "y": this.y + this.height
+    };
+
+    var p2 = {
+      "x": this.x + this.width,
+      "y": this.y
+    };
+
+    pjs.line(p1.x, p1.y,
+      p2.x, p2.y
     );
   },
 

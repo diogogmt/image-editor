@@ -15,17 +15,52 @@ CreateShapeCommand = function (canvas, shape)  {
   }
 }
 
-DeleteShapeCommand = function (canvas, shape)  {
-  var shape;
+DeleteShapeCommand = function (canvas)  {
+  var selectedShapes = canvas.getSelectedShapes()
+    , i
+    , end = selectedShapes.length
+    , shape
+    , shapes = [];
 
+  for (i = 0; i < end; i++) {
+    shape = selectedShapes[i];
+    shapes.push(Utils.ShapeFactory.createShape(RECT, {
+      "x": shape.getX(),
+      "y": shape.getY(),
+      "width": shape.getWidth(),
+      "height": shape.getHeight(),
+      "color": shape.getColor(),
+      "lineWeight": shape.getLineWeight(),
+      "lineStyle": null,
+      "lineColor": new Utils.Color(0,0,0),
+      "selected": shape.getSelected(),
+      "group": shape.getGroup(),
+      "overlay": shape.getOverlay(),
+    }));
+  }
   return {
     "execute": function () {
-      canvas.removeShape(shape);
-      canvas.
+      console.log("DeleteShapeCommand - execute");
+      var i
+        , end = selectedShapes.length;
+
+      for (i = 0; i < end; i++) {
+        console.log("i: ", i);
+        canvas.removeShape(selectedShapes[i]);
+        canvas.removeSelectedShape(selectedShapes[i]);
+      }
       canvas.updateShapeGroup();
+      console.log("selectedShapes.length: ", selectedShapes.length);
     },
     "undo": function () {
-      canvas.insertShape(shape);
+      console.log("DeleteShapeCommand - undo");
+      var i
+        , end = shapes.length;
+      console.log("shapes.length: ", shapes.length);
+      for (i = 0; i < end; i++) {
+        console.log("i: ", i);
+        canvas.addShape(shapes[i]);
+      }
       canvas.updateShapeGroup();
     }
   }
@@ -61,15 +96,28 @@ SetColorCommand = function (shapes, color)  {
   }
 }
 
-SetLineWeightCommand = function (canvas, lineWeight)  {
-  var oldLineWeight = canvas.getLineWeight();
+SetLineWeightCommand = function (shapes, lineWeight)  {
+  console.log("SetLineWeightCommand");
+  var oldLineWeight = []
+    , i
+    , end = shapes.length;
+
+    for (i = 0; i < end; i++) {
+      oldLineWeight.push(shapes[i].getLineWeight());
+    }
 
   return {
     "execute": function () {
-      canvas.setLineWeight(lineWeight);
+      console.log("SetLineWeightCommand - execute");
+      for (i = 0; i < end; i++) {
+        shapes[i].setLineWeight(lineWeight);
+      }
     },
     "undo": function () {
-      canvas.setColor(oldLineWeight);
+      console.log("SetLineWeightCommand - undo");
+      for (i = 0; i < end; i++) {
+        shapes[i].setLineWeight(oldLineWeight[i]);
+      }
     }
   }
 }

@@ -36,22 +36,6 @@ var Rect = Shape.extend({
   },
 
 
-  "getMinX": function() {
-    return this.resizeRect.getLeftX(this.x) + this.resizeRect.getWidth() / 2;
-  },
-
-  "getMaxX": function() {
-    return this.resizeRect.getRightX(this.x, this.width) + this.resizeRect.getWidth() / 2;
-  },
-
-  "getMinY": function() {
-    return this.resizeRect.getTopY(this.y) + this.resizeRect.getHeight() / 2;
-  },
-
-  "getMaxY": function() {
-    return this.resizeRect.getBottomY(this.y, this.height) + this.resizeRect.getHeight() / 2;
-  },
-
 
   "resize": function () {
     // ////console.log("\n\n***resize***");
@@ -209,6 +193,7 @@ var Rect = Shape.extend({
     // //console.log("width,height ("+this.width+","+this.height+")");
 
     pjs.stroke(0);
+    pjs.strokeWeight(1);
     pjs.fill(255);
     // LEFT,TOP RECT
     pjs.rect(this.resizeRect.getLeftX(this.x),
@@ -245,7 +230,8 @@ var Rect = Shape.extend({
     // ////console.log("this.lineColor: ", this.lineColor);
 
     var shapeColor = this.color.getColor()
-      , lineColor = this.getLineColor().getColor();
+      , lineColor = this.getLineColor().getColor()
+      , lineWeight = this.lineWeight;
     // console.log("overlay: ", this.overlay);
     // console.log("this.getOverlay(): ", this.getOverlay());
 
@@ -259,7 +245,7 @@ var Rect = Shape.extend({
     }
 
     pjs.stroke(lineColor.r, lineColor.g, lineColor.b);
-    // pjs.stroke(204, 102, 0);
+    pjs.strokeWeight(lineWeight);
     pjs.rect(this.x, this.y, this.width, this.height);
   },
 

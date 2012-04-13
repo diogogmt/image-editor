@@ -59,6 +59,7 @@
     <br />
     <br />
     <button id="color">Change Color</button>
+    <button id="delete">Delete Shape</button>
     <br />
     <br />
     <canvas id="glibcanvas"></canvas>
@@ -67,8 +68,10 @@
 
 <script>
 
-  const RECT = 1;
-  const CIRCLE = 2;
+  const RECT = 1
+    , CIRCLE = 2
+    , TRIANGLE = 3
+    , LINE = 4;
 
   const DEFAULT = 1
   , MOVE = 2
@@ -212,7 +215,6 @@
     } //getInstance
   }(window.Utils));
 
-  
 
 
 </script>
@@ -223,6 +225,8 @@
 <script src="shapes.js"></script>
 <script src="rect.js"></script>
 <script src="circle.js"></script>
+<script src="triangle.js"></script>
+<script src="line.js"></script>
 <script src="defaultState.js"></script>
 <script src="createState.js"></script>
 <script src="resizeState.js"></script>
@@ -249,6 +253,7 @@
     $("#undo").click(function (e) {
       console.log("undo click");
       Utils.UndoManager.getInstance().undo();
+      return false;
     });
 
     $("#rect").click(function (e) {
@@ -256,14 +261,29 @@
       controller.perform("setCanvasState", [CREATE,RECT]);
     });
 
+    $("#triangle").click(function (e) {
+      console.log("triangle click listener");
+      controller.perform("setCanvasState", [CREATE,TRIANGLE]);
+    });
+
     $("#circle").click(function (e) {
       console.log("circle click listener");
       controller.perform("setCanvasState", [CREATE,CIRCLE]);
     });
 
+    $("#line").click(function (e) {
+      console.log("line click listener");
+      controller.perform("setCanvasState", [CREATE,LINE]);
+    });
+
     $("#color").click(function (e) {
       console.log("color click");
       controller.perform("setColor", [Utils.generateColor()]);
+    });
+
+    $("#delete").click(function (e) {
+      console.log("delete click");
+      controller.perform("deleteShape");
     });
 
     var c = document.getElementById('glibcanvas');
@@ -325,6 +345,8 @@
       console.log("keyCode: ", pjs.keyCode);
     },
 
+    pjs
+
     pjs.setup();
 
     // Color Picker
@@ -348,6 +370,7 @@
       max: 10,
       slide: function (event, ui) {
         $('#lineWeightPreview').css('height', ui.value);
+        controller.perform("setLineWeight", ui.value);
       }
     });
 

@@ -30,6 +30,19 @@
         }
       },
 
+      "setLineWeight": function (aWeight) {
+        console.log("Controller - setLineWeight");
+        console.log("aWeight: ", aWeight);
+        _canvas.setLineWeight(aWeight);
+
+        var shapes = _canvas.getSelectedShapes();
+        if (shapes.length) {
+          var command = new SetLineWeightCommand(shapes, aWeight);
+          command.execute();
+          _undoManager.register(command);
+        }
+      },
+
       "createShape": function (shape) {
         //console.log("Controller - createShape");
         //console.log("shape: ", shape);
@@ -44,6 +57,14 @@
         //console.log("shape: ", options);
         options.canvas = _canvas;
         var command = new ResizeShapeCommand(shape, options);
+        command.execute();
+        _undoManager.register(command);
+      },
+
+      "deleteShape": function () {
+        console.log("Controller - delteShape");
+        //console.log("shape: ", shape);
+        var command = new DeleteShapeCommand(_canvas);
         command.execute();
         _undoManager.register(command);
       },

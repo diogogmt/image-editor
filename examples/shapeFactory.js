@@ -13,6 +13,12 @@
         case CIRCLE:
           shape = new Circle(options);
           break;
+        case TRIANGLE:
+          shape = new Triangle(options);
+          break;
+        case LINE:
+          shape = new Line(options);
+          break;
       }
       return shape;
     };

@@ -20,7 +20,7 @@ var ResizeState = Base.extend({
       "width": shapeGroup.getWidth(),
       "height": shapeGroup.getHeight(),
       "color": new Utils.Color(0,0,0),
-      "lineWeight": null,
+      "lineWeight": 1,
       "lineStyle": null,
       "lineColor": new Utils.Color(0,0,0),
       "selected": false,
