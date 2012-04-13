@@ -4,6 +4,7 @@ var Circle = Shape.extend({
   "width": 0,
   "height": 0,
   "resizePoint": null,
+  "resizeCircle": null,
 
   "maxCoords": {
     "x": 0,
@@ -20,6 +21,7 @@ var Circle = Shape.extend({
     //console.log("opts: ", opts);
     this.width = opts.width;
     this.height = opts.height;
+    this.resizeCircle = Utils.ResizeCircle.getInstance();
     this.base({
       "x": opts.x,
       "y": opts.y,
@@ -30,6 +32,22 @@ var Circle = Shape.extend({
       "selected": opts.selected,
       "group": opts.group,
     });
+  },
+
+  "getMinX": function() {
+    return this.resizeCircle.getLeftX(this.x, this.width) + this.resizeCircle.getWidth() / 2;
+  },
+
+  "getMaxX": function() {
+    return this.resizeCircle.getRightX(this.x, this.width) + this.resizeCircle.getWidth() / 2;
+  },
+
+  "getMinY": function() {
+    return this.resizeCircle.getTopY(this.y, this.height) + this.resizeCircle.getHeight() / 2;
+  },
+
+  "getMaxY": function() {
+    return this.resizeCircle.getBottomY(this.y, this.height) + this.resizeCircle.getHeight() / 2;
   },
 
 
@@ -171,37 +189,38 @@ var Circle = Shape.extend({
   },
 
   "drawResizeRects": function () {
+    console.log("CIRCLE drawResizeRects");
     // console.log("this.isGroup(): ", this.isGroup());
     // console.log("x,y ("+this.x+","+this.y+")");
     // console.log("width,height ("+this.width+","+this.height+")");
     pjs.noStroke();
     pjs.fill(153);
     // LEFT,TOP RECT
-    pjs.rect(this.resizeRect.getLeftX(this.x),
-      this.resizeRect.getTopY(this.y),
-      this.resizeRect.getWidth(),
-      this.resizeRect.getHeight()
+    pjs.rect(this.resizeCircle.getLeftX(this.x, this.width),
+      this.resizeCircle.getTopY(this.y, this.height),
+      this.resizeCircle.getWidth(),
+      this.resizeCircle.getHeight()
     );
 
     // LEFT,BOTTOM RECT
-    pjs.rect(this.resizeRect.getLeftX(this.x),
-      this.resizeRect.getBottomY(this.y, this.height),
-      this.resizeRect.getWidth(),
-      this.resizeRect.getHeight()
+    pjs.rect(this.resizeCircle.getLeftX(this.x, this.width),
+      this.resizeCircle.getBottomY(this.y, this.height),
+      this.resizeCircle.getWidth(),
+      this.resizeCircle.getHeight()
     );
 
     // RIGHT,TOP RECT
-    pjs.rect(this.resizeRect.getRightX(this.x, this.width),
-      this.resizeRect.getTopY(this.y),
-      this.resizeRect.getWidth(),
-      this.resizeRect.getHeight()
+    pjs.rect(this.resizeCircle.getRightX(this.x, this.width),
+      this.resizeCircle.getTopY(this.y, this.height),
+      this.resizeCircle.getWidth(),
+      this.resizeCircle.getHeight()
     );
 
     // RIGHT,BOTTOM RECT
-    pjs.rect(this.resizeRect.getRightX(this.x, this.width),
-      this.resizeRect.getBottomY(this.y, this.height),
-      this.resizeRect.getWidth(),
-      this.resizeRect.getHeight()
+    pjs.rect(this.resizeCircle.getRightX(this.x, this.width),
+      this.resizeCircle.getBottomY(this.y, this.height),
+      this.resizeCircle.getWidth(),
+      this.resizeCircle.getHeight()
     );
   },
 
@@ -246,30 +265,32 @@ var Circle = Shape.extend({
   },
 
 
-  "findResizeCorner": function (lr, tb) {
-    bounds = {
+  "findResizeCorner": function (pos) {
+    console.log("Circle - findResizeCorner");
+    console.log("pos: ", pos.lr + ", " + pos.tb);
+    var bounds = {
       "x" : 0,
       "y" : 0,
       "width" : 0,
       "height" : 0,
+    };
+
+    if (pos.lr === LEFT) {
+      bounds.x = this.resizeCircle.getLeftX(this.x, this.width);
+      bounds.width = this.resizeCircle.getLeftX(this.x, this.width) + this.resizeCircle.getWidth();
+    }
+    else if (pos.lr === RIGHT) {
+      bounds.x = this.resizeCircle.getRightX(this.x, this.width);
+      bounds.width = this.resizeCircle.getRightX(this.x, this.width) + this.resizeCircle.getWidth();
     }
 
-    if (lr === LEFT) {
-      bounds.x = this.x - this.resizeRect.getWidth();
-      bounds.width = this.x;
+    if (pos.tb === TOP) {
+      bounds.y = this.resizeCircle.getTopY(this.y, this.height);
+      bounds.height = this.resizeCircle.getTopY(this.y, this.height) + this.resizeCircle.getHeight();
     }
-    else if (lr === RIGHT) {
-      bounds.x = this.x + this.width;
-      bounds.width = this.x + this.width;
-    }
-
-    if (tb === TOP) {
-      bounds.y = this.y - this.resizeRect.getHeight()
-      bounds.height = this.y + this.resizeRect.getHeight();
-    }
-    else if (tb === BOTTOM) {
-      bounds.y = this.y + this.height
-      bounds.height = this.y + this.height + this.resizeRect.getHeight();
+    else if (pos.tb === BOTTOM) {
+      bounds.y = this.resizeCircle.getBottomY(this.y, this.height);
+      bounds.height = this.resizeCircle.getBottomY(this.y, this.height) + this.resizeCircle.getHeight();
     }
 
     return bounds;

@@ -24,31 +24,30 @@
     <br />
 
     <div class="menu">
-    <ul>
-    <li><a href="" target="_self" >File</a>
-    <ul>
-    <li><a href="" target="_self">New</a></li>
-    <li><a href="" target="_self">Open</a></li>
-    <li><a href="" target="_self">Save</a></li>
-    <li><a href="" target="_self">Group</a></li>
-    <li><a href="" target="_self">Ungroup</a></li>
-    <li><a href="" target="_self">Select All</a></li>
-    </ul>
-    </li>
-    <li><a href="" target="_self" >Edit</a>
-    <ul>
-    <li><a href="" target="_self">Undo</a></li>
-    <li><a href="" target="_self">Redo</a></li>
-    <li><a href="" target="_self">Copy</a></li>
-    <li><a href="" target="_self">Paste</a></li>
-    <li><a href="" target="_self">Delete</a></li>
-    </ul>
-    </li>
-    </ul>
+      <ul class="menuList">
+        <li><a href="#" target="_self" >File</a>
+          <ul>
+            <li><a href="#" target="_self">New</a></li>
+            <li><a href="#" target="_self">Open</a></li>
+            <li><a href="#" target="_self">Save</a></li>
+            <li><a href="#" target="_self">Group</a></li>
+            <li><a href="#" target="_self">Ungroup</a></li>
+            <li><a href="#" target="_self">Select All</a></li>
+          </ul>
+        </li>
+        <li><a href="#" target="_self" >Edit</a>
+          <ul>
+            <li><a id="undo" href="#" target="_self">Undo</a></li>
+            <li><a id="redo" href="#" target="_self">Redo</a></li>
+            <li><a href="#" target="_self">Copy</a></li>
+            <li><a href="#" target="_self">Paste</a></li>
+            <li><a href="#" target="_self">Delete</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
-    <br />
-    <img src="../images/pointerbutton.png" alt="pointer" id="pointer"/><img src="../images/rectanglebutton.png" alt="rectangle" id="rectangle"/><img src="../images/trianglebutton.png" alt="triangle" id="triangle"/><img src="../images/circlebutton.png" alt="circle" id="circle"/><img src="../images/linebutton.png" alt="line" id="line"/>
+    <img src="../images/pointerbutton.png" alt="pointer" id="pointer"/><img src="../images/rectanglebutton.png" alt="rectangle" id="rect"/><img src="../images/trianglebutton.png" alt="triangle" id="triangle"/><img src="../images/circlebutton.png" alt="circle" id="circle"/><img src="../images/linebutton.png" alt="line" id="line"/>
     <div id="customWidget">
         <div id="colorselector"><div style="background-color: #EFEFEF"></div></div>
         <div id="colorpickerholder2"></div>
@@ -57,9 +56,6 @@
     <div id="lineWeightPreview"></div>
     <br />
     <br />
-    <button id="do">Do</button>
-    <button id="undo">Undo</button>
-    <button id="rect">Rect</button>
     <button id="color">Change Color</button>
     <br />
     <br />
@@ -160,12 +156,58 @@
       };
     } // END RESIZE_RECT
     Utils.ResizeRect.getInstance = function() {
-    if (!_resizeRect){
-      _resizeRect = new ResizeRect();
-    } //if
-    return _resizeRect;
-  } //getInstance
+      if (!_resizeRect){
+        _resizeRect = new ResizeRect();
+      } //if
+      return _resizeRect;
+    } //getInstance
 
+    Utils.ResizeCircle = {};
+    var _resizeCircle;
+    function ResizeCircle () {
+      var _width = 8;
+      var _height = 8;
+      var _offsetX = 4;
+      var _offsetY = 4;
+
+      this.getLeftX = function (x, w) {
+        return (x - w) - _width + _offsetX;
+      };
+
+      this.getRightX = function (x, w) {
+        return x + w - _offsetX;
+      };
+
+      this.getTopY = function (y, h) {
+        return (y - h) - _height + _offsetY;
+      };
+
+      this.getBottomY = function (y, h) {
+        return y + h - _offsetY;
+      };
+
+      this.getWidth = function () {
+        return _width;
+      };
+
+      this.getHeight = function () {
+        return _height;
+      };
+
+      this.getOffsetX = function () {
+        return _offsetX;
+      };
+
+      this.getOffsetY = function () {
+        return _offsetY;
+      };
+    } // END RESIZE_CIRCLE
+    Utils.ResizeCircle.getInstance = function() {
+      if (!_resizeCircle){
+        _resizeCircle = new ResizeCircle();
+      } //if
+      return _resizeCircle;
+    } //getInstance
   }(window.Utils));
 
   
@@ -197,7 +239,7 @@
       pjs.noLoop();
     });
 
-    $("#do").click(function (e) {
+    $("#redo").click(function (e) {
       console.log("redo click");
       Utils.UndoManager.getInstance().redo();
     });
@@ -274,6 +316,7 @@
         color: '#EFEFEF',
         onChange: function(hsb, hex, rgb) {
             $('#colorselector div').css('backgroundColor', '#' + hex);
+            controller.perform("setColor", new Utils.Color(rgb));
         }
     });
     $('#colorselector').bind('click', function() {

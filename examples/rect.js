@@ -33,6 +33,23 @@ var Rect = Shape.extend({
   },
 
 
+  "getMinX": function() {
+    return this.resizeRect.getLeftX(this.x) + this.resizeRect.getWidth() / 2;
+  },
+
+  "getMaxX": function() {
+    return this.resizeRect.getRightX(this.x, this.width) + this.resizeRect.getWidth() / 2;
+  },
+
+  "getMinY": function() {
+    return this.resizeRect.getTopY(this.y) + this.resizeRect.getHeight() / 2;
+  },
+
+  "getMaxY": function() {
+    return this.resizeRect.getBottomY(this.y, this.height) + this.resizeRect.getHeight() / 2;
+  },
+
+
   "resize": function () {
     // //console.log("\n\n***resize***");
     var mouseX = pjs.mouseX

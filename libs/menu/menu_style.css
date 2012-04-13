@@ -6,10 +6,11 @@
   font: 67.5% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
   font-size:14px;
   font-weight:bold;
+  width:150px;
   }
 .menu ul{
   background:#f4f4f4;
-  height:35px;
+  height:30px;
   list-style:none;
   margin:0;
   padding:0;
@@ -23,7 +24,7 @@
     color:#606060;
     display:block;
     font-weight:normal;
-    line-height:35px;
+    line-height:30px;
     margin:0px;
     padding:0px 25px;
     text-align:center;
@@ -34,9 +35,9 @@
       color:#ffffff;
       text-decoration:none;
       }
-    .menu ul li:hover a{
+    .menu ul li:hover{
       background: #2580a2 url("images/hover.gif") bottom center no-repeat;
-      color:#ffffff;
+      color:#000000;
       text-decoration:none;
     }
   .menu li ul{
@@ -70,7 +71,7 @@
     }
   .menu li ul a{
     display:block;
-    height:35px;
+    height:30px;
     font-size:12px;
     font-style:normal;
     margin:0px;
