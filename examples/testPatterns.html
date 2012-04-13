@@ -70,6 +70,7 @@
 <script>
 
   const RECT = 1;
+  const CIRCLE = 2;
 
   const DEFAULT = 1
   , MOVE = 2
@@ -167,6 +168,7 @@
 <script src="shapeFactory.js"></script>
 <script src="shapes.js"></script>
 <script src="rect.js"></script>
+<script src="circle.js"></script>
 <script src="defaultState.js"></script>
 <script src="createState.js"></script>
 <script src="resizeState.js"></script>
@@ -198,6 +200,11 @@
     $("#rect").click(function (e) {
       console.log("rect click listener");
       controller.perform("setCanvasState", [CREATE,RECT]);
+    });
+
+    $("#circle").click(function (e) {
+      console.log("circle click listener");
+      controller.perform("setCanvasState", [CREATE,CIRCLE]);
     });
 
     $("#color").click(function (e) {
